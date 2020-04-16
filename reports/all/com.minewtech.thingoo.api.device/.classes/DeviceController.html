@@ -1,0 +1,276 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: DeviceController</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.minewtech.thingoo.api.device</a> ]
+</div>
+
+<h1>Coverage Summary for Class: DeviceController (com.minewtech.thingoo.api.device)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DeviceController</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 56)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">DeviceController$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 9)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 65)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.minewtech.thingoo.api.device;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.minewtech.thingoo.api.user.UserService;
+<i>4</i>&nbsp;import com.minewtech.thingoo.model.device.Device;
+<i>5</i>&nbsp;import com.minewtech.thingoo.model.device.DeviceType;
+<i>6</i>&nbsp;import com.minewtech.thingoo.model.response.OperationResponse;
+<i>7</i>&nbsp;import com.minewtech.thingoo.model.response.PageResponse;
+<i>8</i>&nbsp;import com.minewtech.thingoo.repository.DeviceRepository;
+<i>9</i>&nbsp;import io.swagger.annotations.Api;
+<i>10</i>&nbsp;import io.swagger.annotations.ApiOperation;
+<i>11</i>&nbsp;import io.swagger.annotations.ApiParam;
+<i>12</i>&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+<i>13</i>&nbsp;import org.springframework.data.domain.Page;
+<i>14</i>&nbsp;import org.springframework.data.domain.Pageable;
+<i>15</i>&nbsp;import org.springframework.data.domain.Sort;
+<i>16</i>&nbsp;import org.springframework.data.jpa.domain.Specification;
+<i>17</i>&nbsp;import org.springframework.data.jpa.domain.Specifications;
+<i>18</i>&nbsp;import org.springframework.data.web.PageableDefault;
+<i>19</i>&nbsp;import org.springframework.web.bind.annotation.*;
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;import javax.persistence.criteria.CriteriaBuilder;
+<i>22</i>&nbsp;import javax.persistence.criteria.CriteriaQuery;
+<i>23</i>&nbsp;import javax.persistence.criteria.Predicate;
+<i>24</i>&nbsp;import javax.persistence.criteria.Root;
+<i>25</i>&nbsp;import javax.servlet.http.HttpServletRequest;
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;@RestController
+<i>28</i>&nbsp;@Api(tags = {&quot;Device&quot;})
+<b class="nc"><i>29</i>&nbsp;public class DeviceController {</b>
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;    @Autowired
+<i>32</i>&nbsp;    private DeviceRepository deviceRepository;
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;    @Autowired
+<i>35</i>&nbsp;    private UserService userService;
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;    @ApiOperation(value = &quot;Gets current device information&quot;, response = Page.class)
+<i>38</i>&nbsp;    @RequestMapping(value=&quot;/devices&quot;, method= RequestMethod.GET)
+<i>39</i>&nbsp;    public PageResponse getDeviceList(
+<i>40</i>&nbsp;            @ApiParam(value = &quot;&quot; ) @RequestParam(value = &quot;type&quot;  ,  required = false) DeviceType type,
+<i>41</i>&nbsp;            @ApiParam(value = &quot;&quot; ) @PageableDefault(page = 0, size = 10, sort = &quot;updatedAt&quot;, direction = Sort.Direction.DESC) Pageable pageable){
+<b class="nc"><i>42</i>&nbsp;        PageResponse resp = new PageResponse();</b>
+<b class="nc"><i>43</i>&nbsp;        String loggedInUserId = userService.getLoggedInUserId();</b>
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;        Page&lt;Device&gt; r;
+<i>46</i>&nbsp;
+<i>47</i>&nbsp;//        r = deviceRepository.findByUserId(loggedInUserId, pageable);
+<b class="nc"><i>48</i>&nbsp;        r = deviceRepository.findAll(Specifications.where(getWhereClause(loggedInUserId, type)), pageable);</b>
+<i>49</i>&nbsp;
+<b class="nc"><i>50</i>&nbsp;        resp.setPageStats(r,true);</b>
+<i>51</i>&nbsp;
+<b class="nc"><i>52</i>&nbsp;        return resp;</b>
+<i>53</i>&nbsp;    }
+<i>54</i>&nbsp;
+<i>55</i>&nbsp;    private Specification&lt;Device&gt; getWhereClause(String userId, DeviceType type) {
+<b class="nc"><i>56</i>&nbsp;        return new Specification&lt;Device&gt;() {</b>
+<i>57</i>&nbsp;            @Override
+<i>58</i>&nbsp;            public Predicate toPredicate(Root&lt;Device&gt; r, CriteriaQuery&lt;?&gt; q, CriteriaBuilder cb) {
+<b class="nc"><i>59</i>&nbsp;                Predicate predicate = cb.conjunction();</b>
+<b class="nc"><i>60</i>&nbsp;                if (type != null) {</b>
+<b class="nc"><i>61</i>&nbsp;                    predicate.getExpressions().add(</b>
+<b class="nc"><i>62</i>&nbsp;                            cb.equal(r.&lt;DeviceType&gt;get(&quot;type&quot;), type)</b>
+<i>63</i>&nbsp;                    );
+<i>64</i>&nbsp;
+<i>65</i>&nbsp;                }
+<i>66</i>&nbsp;
+<b class="nc"><i>67</i>&nbsp;                if (userId != null &amp;&amp; !userId.isEmpty()) {</b>
+<b class="nc"><i>68</i>&nbsp;                    predicate.getExpressions().add(</b>
+<b class="nc"><i>69</i>&nbsp;                            cb.equal(r.&lt;String&gt;get(&quot;userId&quot;), userId)</b>
+<i>70</i>&nbsp;                    );
+<i>71</i>&nbsp;                }
+<b class="nc"><i>72</i>&nbsp;                return predicate;</b>
+<i>73</i>&nbsp;            }
+<i>74</i>&nbsp;        };
+<i>75</i>&nbsp;    }
+<i>76</i>&nbsp;
+<i>77</i>&nbsp;    @ApiOperation(value = &quot;Add new device&quot;, response = OperationResponse.class)
+<i>78</i>&nbsp;    @RequestMapping(value = &quot;/devices&quot;, method = RequestMethod.POST, produces = {&quot;application/json&quot;})
+<i>79</i>&nbsp;    public OperationResponse postDevice(@RequestBody Device device, HttpServletRequest req) {
+<b class="nc"><i>80</i>&nbsp;        OperationResponse resp = new OperationResponse();</b>
+<b class="nc"><i>81</i>&nbsp;        String loggedInUserId = userService.getLoggedInUserId();</b>
+<i>82</i>&nbsp;//        resp.setLoggedInUserId(loggedInUserId);
+<i>83</i>&nbsp;
+<b class="nc"><i>84</i>&nbsp;        device.setUserId(loggedInUserId);</b>
+<i>85</i>&nbsp;
+<b class="nc"><i>86</i>&nbsp;        Device r = deviceRepository.save(device);</b>
+<i>87</i>&nbsp;
+<b class="nc"><i>88</i>&nbsp;        if (r.getUuid() != &quot;&quot;) {</b>
+<b class="nc"><i>89</i>&nbsp;            resp.setStatus(200);</b>
+<b class="nc"><i>90</i>&nbsp;            resp.setMessage(&quot;Record Added&quot;);</b>
+<b class="nc"><i>91</i>&nbsp;            resp.setData(r);</b>
+<i>92</i>&nbsp;        } else {
+<b class="nc"><i>93</i>&nbsp;            resp.setStatus(400);</b>
+<b class="nc"><i>94</i>&nbsp;            resp.setMessage(&quot;Unable to add Record&quot;);</b>
+<i>95</i>&nbsp;        }
+<b class="nc"><i>96</i>&nbsp;        return resp;</b>
+<i>97</i>&nbsp;    }
+<i>98</i>&nbsp;
+<i>99</i>&nbsp;    @ApiOperation(value = &quot;Gets current device information&quot;, response = OperationResponse.class)
+<i>100</i>&nbsp;    @RequestMapping(value=&quot;/devices/{uuid}&quot;, method=RequestMethod.GET, produces = {&quot;application/json&quot;})
+<i>101</i>&nbsp;    public OperationResponse getDevice(@PathVariable String uuid, HttpServletRequest req) {
+<b class="nc"><i>102</i>&nbsp;        OperationResponse resp = new OperationResponse();</b>
+<b class="nc"><i>103</i>&nbsp;        String loggedInUserId = userService.getLoggedInUserId();</b>
+<i>104</i>&nbsp;//        resp.setLoggedInUserId(loggedInUserId);
+<b class="nc"><i>105</i>&nbsp;        Device device = null;</b>
+<b class="nc"><i>106</i>&nbsp;        if (uuid != null &amp;&amp; (uuid.length() == 12)){ // Check if Mac Address</b>
+<b class="nc"><i>107</i>&nbsp;            device = deviceRepository.findOneByMac(uuid).orElse(null);</b>
+<b class="nc"><i>108</i>&nbsp;        } else if (uuid != null){</b>
+<b class="nc"><i>109</i>&nbsp;            device = deviceRepository.findOneByUuid(uuid).orElse(null);</b>
+<i>110</i>&nbsp;        }
+<i>111</i>&nbsp;
+<b class="nc"><i>112</i>&nbsp;        if (device != null) {</b>
+<b class="nc"><i>113</i>&nbsp;            resp.setStatus(200);</b>
+<b class="nc"><i>114</i>&nbsp;            resp.setData(device);</b>
+<i>115</i>&nbsp;        } else {
+<b class="nc"><i>116</i>&nbsp;            resp.setStatus(404);</b>
+<b class="nc"><i>117</i>&nbsp;            resp.setMessage(&quot;No Record Exist&quot;);</b>
+<i>118</i>&nbsp;        }
+<i>119</i>&nbsp;
+<b class="nc"><i>120</i>&nbsp;        return resp;</b>
+<i>121</i>&nbsp;    }
+<i>122</i>&nbsp;
+<i>123</i>&nbsp;    @ApiOperation(value = &quot;Edit current device information&quot;, response = OperationResponse.class)
+<i>124</i>&nbsp;    @RequestMapping(value=&quot;/devices/{uuid}&quot;, method=RequestMethod.PUT)
+<i>125</i>&nbsp;    public OperationResponse putDevice(@PathVariable String uuid, @RequestBody Device device) {
+<b class="nc"><i>126</i>&nbsp;        OperationResponse resp = new OperationResponse();</b>
+<b class="nc"><i>127</i>&nbsp;        String loggedInUserId = userService.getLoggedInUserId();</b>
+<i>128</i>&nbsp;//        resp.setLoggedInUserId(loggedInUserId);
+<i>129</i>&nbsp;
+<b class="nc"><i>130</i>&nbsp;        if (this.deviceRepository.exists(uuid) ){</b>
+<b class="nc"><i>131</i>&nbsp;            device.setUuid(uuid);</b>
+<b class="nc"><i>132</i>&nbsp;            device.setUserId(loggedInUserId);</b>
+<b class="nc"><i>133</i>&nbsp;            Device r = this.deviceRepository.save(device);</b>
+<b class="nc"><i>134</i>&nbsp;            resp.setStatus(200);</b>
+<b class="nc"><i>135</i>&nbsp;            resp.setMessage(&quot;Record Updated&quot;);</b>
+<b class="nc"><i>136</i>&nbsp;            resp.setData(r);</b>
+<b class="nc"><i>137</i>&nbsp;        }</b>
+<i>138</i>&nbsp;        else{
+<b class="nc"><i>139</i>&nbsp;            resp.setStatus(404);</b>
+<b class="nc"><i>140</i>&nbsp;            resp.setMessage(&quot;No Record Exist&quot;);</b>
+<i>141</i>&nbsp;        }
+<i>142</i>&nbsp;
+<b class="nc"><i>143</i>&nbsp;        return resp;</b>
+<i>144</i>&nbsp;    }
+<i>145</i>&nbsp;
+<i>146</i>&nbsp;    @ApiOperation(value = &quot;Delete current device&quot;, response = OperationResponse.class)
+<i>147</i>&nbsp;    @RequestMapping(value=&quot;/devices/{uuid}&quot;, method=RequestMethod.DELETE)
+<i>148</i>&nbsp;    public OperationResponse deleteDevice(@PathVariable String uuid) {
+<b class="nc"><i>149</i>&nbsp;        OperationResponse resp = new OperationResponse();</b>
+<b class="nc"><i>150</i>&nbsp;        String loggedInUserId = userService.getLoggedInUserId();</b>
+<i>151</i>&nbsp;//        resp.setLoggedInUserId(loggedInUserId);
+<i>152</i>&nbsp;
+<b class="nc"><i>153</i>&nbsp;        if (this.deviceRepository.exists(uuid) ){</b>
+<b class="nc"><i>154</i>&nbsp;            Device r =deviceRepository.findOneByUuid(uuid).orElse(null);</b>
+<b class="nc"><i>155</i>&nbsp;            this.deviceRepository.delete(uuid);</b>
+<b class="nc"><i>156</i>&nbsp;            resp.setStatus(200);</b>
+<b class="nc"><i>157</i>&nbsp;            resp.setMessage(&quot;Record Deleted&quot;);</b>
+<b class="nc"><i>158</i>&nbsp;            resp.setData(r);</b>
+<b class="nc"><i>159</i>&nbsp;        }</b>
+<i>160</i>&nbsp;        else{
+<b class="nc"><i>161</i>&nbsp;            resp.setStatus(404);</b>
+<b class="nc"><i>162</i>&nbsp;            resp.setMessage(&quot;No Record Exist&quot;);</b>
+<i>163</i>&nbsp;        }
+<b class="nc"><i>164</i>&nbsp;        return resp;</b>
+<i>165</i>&nbsp;    }
+<i>166</i>&nbsp;
+<i>167</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-04-16 17:44</div>
+</div>
+</body>
+</html>

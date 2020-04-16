@@ -1,0 +1,146 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: SessionController</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.minewtech.thingoo.api</a> ]
+</div>
+
+<h1>Coverage Summary for Class: SessionController (com.minewtech.thingoo.api)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SessionController</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 18)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.minewtech.thingoo.api;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.minewtech.thingoo.model.session.SessionItem;
+<i>4</i>&nbsp;import com.minewtech.thingoo.model.session.SessionResponse;
+<i>5</i>&nbsp;import com.minewtech.thingoo.model.user.LoginRequest;
+<i>6</i>&nbsp;import com.minewtech.thingoo.model.user.User;
+<i>7</i>&nbsp;import com.minewtech.thingoo.repository.UserRepository;
+<i>8</i>&nbsp;import io.swagger.annotations.Api;
+<i>9</i>&nbsp;import io.swagger.annotations.ApiResponse;
+<i>10</i>&nbsp;import io.swagger.annotations.ApiResponses;
+<i>11</i>&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+<i>12</i>&nbsp;import org.springframework.http.MediaType;
+<i>13</i>&nbsp;import org.springframework.web.bind.annotation.*;
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;import javax.servlet.http.HttpServletRequest;
+<i>16</i>&nbsp;import javax.servlet.http.HttpServletResponse;
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;/*
+<i>20</i>&nbsp;This is a dummy rest controller, for the purpose of documentation (/session) path is map to a filter
+<i>21</i>&nbsp; - This will only be invoked if security is disabled
+<i>22</i>&nbsp; - If Security is enabled then SessionFilter.java is invoked
+<i>23</i>&nbsp; - Enabling and Disabling Security is done at config/applicaton.properties &#39;security.ignored=/**&#39;
+<i>24</i>&nbsp;*/
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;@RestController
+<i>27</i>&nbsp;@Api(tags = {&quot;Authentication&quot;})
+<b class="nc"><i>28</i>&nbsp;public class SessionController {</b>
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;    @Autowired
+<i>31</i>&nbsp;    private UserRepository userRepository;
+<i>32</i>&nbsp;
+<i>33</i>&nbsp;    @ApiResponses(value = { @ApiResponse(code = 200, message = &quot;Will return a security token, which must be passed in every request&quot;, response = SessionResponse.class) })
+<i>34</i>&nbsp;    @RequestMapping(value = &quot;/token&quot;, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+<i>35</i>&nbsp;    @ResponseBody
+<i>36</i>&nbsp;    public SessionResponse newSession(@RequestBody LoginRequest login, HttpServletRequest request, HttpServletResponse response) {
+<b class="nc"><i>37</i>&nbsp;        System.out.format(&quot;\n /Token Called username=%s\n&quot;, login.getUsername());</b>
+<b class="nc"><i>38</i>&nbsp;        User user = userRepository.findOneByUuidAndPassword(login.getUsername(), login.getPassword()).orElse(null);</b>
+<b class="nc"><i>39</i>&nbsp;        System.out.println(user);</b>
+<b class="nc"><i>40</i>&nbsp;        SessionResponse resp = new SessionResponse();</b>
+<b class="nc"><i>41</i>&nbsp;        SessionItem sessionItem = new SessionItem();</b>
+<i>42</i>&nbsp;
+<b class="nc"><i>43</i>&nbsp;        if (user != null){</b>
+<b class="nc"><i>44</i>&nbsp;            System.out.format(&quot;\n /User Details=%s\n&quot;, user.getName());</b>
+<b class="nc"><i>45</i>&nbsp;            sessionItem.setToken(&quot;xxx.xxx.xxx&quot;);</b>
+<b class="nc"><i>46</i>&nbsp;            sessionItem.setUserId(user.getUuid());</b>
+<b class="nc"><i>47</i>&nbsp;            sessionItem.setName(user.getName());</b>
+<b class="nc"><i>48</i>&nbsp;            sessionItem.setEmail(user.getEmail());</b>
+<i>49</i>&nbsp;            //sessionItem.setRole(user.getRole());
+<i>50</i>&nbsp;
+<b class="nc"><i>51</i>&nbsp;            resp.setStatus(200);</b>
+<b class="nc"><i>52</i>&nbsp;            resp.setMessage(&quot;Dummy Login Success&quot;);</b>
+<b class="nc"><i>53</i>&nbsp;            resp.setData(sessionItem);</b>
+<i>54</i>&nbsp;      }
+<i>55</i>&nbsp;      else{
+<b class="nc"><i>56</i>&nbsp;            resp.setStatus(400);</b>
+<b class="nc"><i>57</i>&nbsp;            resp.setMessage(&quot;Login Failed&quot;);</b>
+<i>58</i>&nbsp;      }
+<i>59</i>&nbsp;
+<b class="nc"><i>60</i>&nbsp;      return resp;</b>
+<i>61</i>&nbsp;  }
+<i>62</i>&nbsp;
+<i>63</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-04-10 15:00</div>
+</div>
+</body>
+</html>

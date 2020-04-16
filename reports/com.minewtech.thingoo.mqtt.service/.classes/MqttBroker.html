@@ -1,0 +1,143 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: MqttBroker</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.minewtech.thingoo.mqtt.service</a> ]
+</div>
+
+<h1>Coverage Summary for Class: MqttBroker (com.minewtech.thingoo.mqtt.service)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MqttBroker</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 30)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.minewtech.thingoo.mqtt.service;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.alibaba.fastjson.JSON;
+<i>4</i>&nbsp;import com.minewtech.thingoo.model.instructions.Instructions;
+<i>5</i>&nbsp;import org.eclipse.paho.client.mqttv3.*;
+<i>6</i>&nbsp;import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+<i>7</i>&nbsp;
+<b class="nc"><i>8</i>&nbsp;public class MqttBroker {</b>
+<i>9</i>&nbsp;
+<b class="nc"><i>10</i>&nbsp;    private static int qos = 0; //????</b>
+<b class="nc"><i>11</i>&nbsp;    private static String broker = &quot;tcp://localhost:1883&quot;;</b>
+<b class="nc"><i>12</i>&nbsp;    private static String userName = &quot;tuyou&quot;;</b>
+<b class="nc"><i>13</i>&nbsp;    private static String passWord = &quot;tuyou&quot;;</b>
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;    private static MqttClient connect(String clientId, String userName,
+<i>17</i>&nbsp;                                      String password) throws MqttException {
+<b class="nc"><i>18</i>&nbsp;        MemoryPersistence persistence = new MemoryPersistence();</b>
+<b class="nc"><i>19</i>&nbsp;        MqttConnectOptions connOpts = new MqttConnectOptions();</b>
+<b class="nc"><i>20</i>&nbsp;        connOpts.setCleanSession(true);</b>
+<b class="nc"><i>21</i>&nbsp;        connOpts.setUserName(userName);</b>
+<b class="nc"><i>22</i>&nbsp;        connOpts.setPassword(password.toCharArray());</b>
+<b class="nc"><i>23</i>&nbsp;        connOpts.setConnectionTimeout(10);</b>
+<b class="nc"><i>24</i>&nbsp;        connOpts.setKeepAliveInterval(20);</b>
+<i>25</i>&nbsp;//      String[] uris = {&quot;tcp://10.100.124.206:1883&quot;,&quot;tcp://10.100.124.207:1883&quot;};
+<i>26</i>&nbsp;//      connOpts.setServerURIs(uris);  //?????????????
+<b class="nc"><i>27</i>&nbsp;        MqttClient mqttClient = new MqttClient(broker, clientId, persistence);</b>
+<b class="nc"><i>28</i>&nbsp;        mqttClient.setCallback(new PushCallback());</b>
+<b class="nc"><i>29</i>&nbsp;        mqttClient.connect(connOpts);</b>
+<b class="nc"><i>30</i>&nbsp;        return mqttClient;</b>
+<i>31</i>&nbsp;    }
+<i>32</i>&nbsp;
+<i>33</i>&nbsp;    private static void pub(MqttClient sampleClient, String msg,String topic)
+<i>34</i>&nbsp;            throws MqttPersistenceException, MqttException {
+<b class="nc"><i>35</i>&nbsp;        Instructions instructions=new Instructions();</b>
+<b class="nc"><i>36</i>&nbsp;        instructions.setAction(&quot;reboot&quot;);</b>
+<b class="nc"><i>37</i>&nbsp;        instructions.setRequestId(msg);</b>
+<b class="nc"><i>38</i>&nbsp;        String o= JSON.toJSONString(instructions);</b>
+<b class="nc"><i>39</i>&nbsp;        MqttMessage message = new MqttMessage(o.getBytes());</b>
+<b class="nc"><i>40</i>&nbsp;        message.setQos(qos);</b>
+<b class="nc"><i>41</i>&nbsp;        message.setRetained(false);</b>
+<b class="nc"><i>42</i>&nbsp;        sampleClient.publish(topic, message);</b>
+<i>43</i>&nbsp;    }
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;    public static void publish(String str,String clientId,String topic) throws MqttException{
+<b class="nc"><i>46</i>&nbsp;        MqttClient mqttClient = connect(clientId,userName,passWord);</b>
+<i>47</i>&nbsp;
+<b class="nc"><i>48</i>&nbsp;        if (mqttClient != null) {</b>
+<b class="nc"><i>49</i>&nbsp;            pub(mqttClient, str, topic);</b>
+<b class="nc"><i>50</i>&nbsp;            System.out.println(&quot;pub--&gt;&quot; + str);</b>
+<i>51</i>&nbsp;        }
+<i>52</i>&nbsp;
+<b class="nc"><i>53</i>&nbsp;        if (mqttClient != null) {</b>
+<b class="nc"><i>54</i>&nbsp;            mqttClient.disconnect();</b>
+<i>55</i>&nbsp;        }
+<i>56</i>&nbsp;    }
+<i>57</i>&nbsp;
+<i>58</i>&nbsp;
+<i>59</i>&nbsp;
+<i>60</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-04-10 15:00</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,135 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: PageResponse</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.minewtech.thingoo.model.response</a> ]
+</div>
+
+<h1>Coverage Summary for Class: PageResponse (com.minewtech.thingoo.model.response)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PageResponse</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 33)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.minewtech.thingoo.model.response;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import lombok.Getter;
+<i>4</i>&nbsp;import lombok.Setter;
+<i>5</i>&nbsp;import org.springframework.data.domain.Page;
+<i>6</i>&nbsp;import org.springframework.data.domain.Sort;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import java.util.List;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;//@Data //for getters and setters
+<b class="nc"><i>11</i>&nbsp;public class PageResponse extends OperationResponse {</b>
+<b class="nc"><i>12</i>&nbsp;  @Getter @Setter private boolean  first;</b>
+<b class="nc"><i>13</i>&nbsp;  @Getter @Setter private boolean  last;</b>
+<b class="nc"><i>14</i>&nbsp;  @Getter @Setter private int currentPageNumber;</b>
+<b class="nc"><i>15</i>&nbsp;  @Getter @Setter private int itemsInPage;</b>
+<b class="nc"><i>16</i>&nbsp;  @Getter @Setter private int pageSize;</b>
+<b class="nc"><i>17</i>&nbsp;  @Getter @Setter private int totalPages;</b>
+<b class="nc"><i>18</i>&nbsp;  @Getter @Setter private long totalItems;</b>
+<b class="nc"><i>19</i>&nbsp;  @Getter @Setter private Sort sort;</b>
+<b class="nc"><i>20</i>&nbsp;  @Getter @Setter private List data;</b>
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;  public void setPageStats(Page pg, boolean setDefaultMessage){
+<b class="nc"><i>23</i>&nbsp;    this.first             = pg.isFirst();</b>
+<b class="nc"><i>24</i>&nbsp;    this.last              = pg.isLast();</b>
+<b class="nc"><i>25</i>&nbsp;    this.currentPageNumber = pg.getNumber();</b>
+<b class="nc"><i>26</i>&nbsp;    this.itemsInPage       = pg.getNumberOfElements();</b>
+<b class="nc"><i>27</i>&nbsp;    this.pageSize          = pg.getSize();</b>
+<b class="nc"><i>28</i>&nbsp;    this.totalPages        = pg.getTotalPages();</b>
+<b class="nc"><i>29</i>&nbsp;    this.totalItems        = pg.getTotalElements();</b>
+<b class="nc"><i>30</i>&nbsp;    this.data              = pg.getContent();</b>
+<b class="nc"><i>31</i>&nbsp;    this.sort              = pg.getSort();</b>
+<b class="nc"><i>32</i>&nbsp;    if (setDefaultMessage == true){</b>
+<b class="nc"><i>33</i>&nbsp;      this.setStatus(200);</b>
+<b class="nc"><i>34</i>&nbsp;      this.setMessage(&quot;Page &quot; + (pg.getNumber()+ 1 ) + &quot; of &quot; + pg.getTotalPages() );</b>
+<i>35</i>&nbsp;    }
+<b class="nc"><i>36</i>&nbsp;  }</b>
+<i>37</i>&nbsp;
+<i>38</i>&nbsp;  public void setPageTotal(int count, boolean setDefaultMessage){
+<i>39</i>&nbsp;    //this.items             = list;
+<b class="nc"><i>40</i>&nbsp;    this.first             = true;</b>
+<b class="nc"><i>41</i>&nbsp;    this.last              = true;</b>
+<b class="nc"><i>42</i>&nbsp;    this.itemsInPage       = count;</b>
+<b class="nc"><i>43</i>&nbsp;    this.totalItems        = count;</b>
+<b class="nc"><i>44</i>&nbsp;    this.totalPages        = 1;</b>
+<b class="nc"><i>45</i>&nbsp;    this.pageSize          = count;</b>
+<b class="nc"><i>46</i>&nbsp;    if (setDefaultMessage == true){</b>
+<b class="nc"><i>47</i>&nbsp;      this.setStatus(200);</b>
+<b class="nc"><i>48</i>&nbsp;      this.setMessage(&quot;Total &quot; + count + &quot; items &quot;);</b>
+<i>49</i>&nbsp;    }
+<b class="nc"><i>50</i>&nbsp;  }</b>
+<i>51</i>&nbsp;
+<i>52</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-04-16 17:44</div>
+</div>
+</body>
+</html>

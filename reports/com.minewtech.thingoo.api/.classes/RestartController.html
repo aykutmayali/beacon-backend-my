@@ -1,0 +1,122 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: RestartController</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.minewtech.thingoo.api</a> ]
+</div>
+
+<h1>Coverage Summary for Class: RestartController (com.minewtech.thingoo.api)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">RestartController</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 10)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.minewtech.thingoo.api;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.alibaba.fastjson.JSON;
+<i>4</i>&nbsp;import com.minewtech.thingoo.model.instructions.Instructions;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import com.minewtech.thingoo.mqtt.service.MqttBroker;
+<i>7</i>&nbsp;import com.minewtech.thingoo.repository.OperationRepository;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;import org.eclipse.paho.client.mqttv3.*;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+<i>12</i>&nbsp;import org.springframework.web.bind.annotation.*;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;import java.util.UUID;
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;@RestController
+<b class="nc"><i>18</i>&nbsp;public class RestartController {</b>
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;        @Autowired
+<i>22</i>&nbsp;        private OperationRepository operationRepository;
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;    @RequestMapping(value = &quot;account/gatewayMac&quot;,method = RequestMethod.POST)
+<i>26</i>&nbsp;    public String restart(@RequestParam String gatewayMac) throws MqttException {
+<i>27</i>&nbsp;
+<b class="nc"><i>28</i>&nbsp;        Instructions instructions =new Instructions();</b>
+<i>29</i>&nbsp;
+<b class="nc"><i>30</i>&nbsp;            instructions.setAction(&quot;reboot&quot;);</b>
+<b class="nc"><i>31</i>&nbsp;            instructions.setRequestId(gatewayMac);</b>
+<b class="nc"><i>32</i>&nbsp;            String topic=&quot;/gw/&quot;+gatewayMac+&quot;/action&quot;;</b>
+<b class="nc"><i>33</i>&nbsp;        System.out.println(topic);</b>
+<b class="nc"><i>34</i>&nbsp;        String o=JSON.toJSONString(instructions);</b>
+<b class="nc"><i>35</i>&nbsp;        MqttBroker.publish(gatewayMac, UUID.randomUUID().toString(),topic);</b>
+<b class="nc"><i>36</i>&nbsp;        System.out.println(&quot;ww&quot;+o);</b>
+<b class="nc"><i>37</i>&nbsp;        return &quot;ok&quot;;</b>
+<i>38</i>&nbsp;    }
+<i>39</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-04-10 15:00</div>
+</div>
+</body>
+</html>

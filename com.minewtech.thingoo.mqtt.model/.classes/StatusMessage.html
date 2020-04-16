@@ -1,0 +1,135 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: StatusMessage</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.minewtech.thingoo.mqtt.model</a> ]
+</div>
+
+<h1>Coverage Summary for Class: StatusMessage (com.minewtech.thingoo.mqtt.model)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">StatusMessage</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 18)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.minewtech.thingoo.mqtt.model;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;
+<i>4</i>&nbsp;import lombok.Getter;
+<i>5</i>&nbsp;import lombok.Setter;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import java.util.Date;
+<i>8</i>&nbsp;
+<b class="nc"><i>9</i>&nbsp;public class StatusMessage {</b>
+<i>10</i>&nbsp;
+<b class="nc"><i>11</i>&nbsp;    @Getter @Setter private String gatewayMac;</b>
+<b class="nc"><i>12</i>&nbsp;    @Getter @Setter private String mac;</b>
+<i>13</i>&nbsp;//    @Enumerated(EnumType.STRING)
+<i>14</i>&nbsp;
+<b class="nc"><i>15</i>&nbsp;        @Getter @Setter private String type;</b>
+<b class="nc"><i>16</i>&nbsp;    @Getter @Setter private String bleName;</b>
+<b class="nc"><i>17</i>&nbsp;    @Getter @Setter private String ibeaconUuid;</b>
+<b class="nc"><i>18</i>&nbsp;    @Getter @Setter private Integer ibeaconMajor;</b>
+<b class="nc"><i>19</i>&nbsp;    @Getter @Setter private Integer ibeaconMinor;</b>
+<b class="nc"><i>20</i>&nbsp;    @Getter @Setter private Integer ibeaconTxPower;</b>
+<b class="nc"><i>21</i>&nbsp;    @Getter @Setter private Integer rssi;</b>
+<b class="nc"><i>22</i>&nbsp;    @Getter @Setter private Integer battery;</b>
+<b class="nc"><i>23</i>&nbsp;    @Getter @Setter private Float temperature;</b>
+<b class="nc"><i>24</i>&nbsp;    @Getter @Setter private Float humidity;</b>
+<b class="nc"><i>25</i>&nbsp;    @Getter @Setter private String rawData;</b>
+<b class="nc"><i>26</i>&nbsp;    @Getter @Setter private Float gatewayLoad;</b>
+<b class="nc"><i>27</i>&nbsp;    @Getter @Setter private Float gatewayFree;</b>
+<i>28</i>&nbsp;
+<b class="nc"><i>29</i>&nbsp;    @Getter @Setter private Date timestamp;</b>
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;    @Override
+<i>32</i>&nbsp;    public String toString() {
+<b class="nc"><i>33</i>&nbsp;        return &quot;StatusMessage{&quot; +</b>
+<i>34</i>&nbsp;                &quot;gatewayMac=&#39;&quot; + gatewayMac + &#39;\&#39;&#39; +
+<i>35</i>&nbsp;                &quot;, mac=&#39;&quot; + mac + &#39;\&#39;&#39; +
+<i>36</i>&nbsp;                &quot;, type=&#39;&quot; + type + &#39;\&#39;&#39; +
+<i>37</i>&nbsp;                &quot;, bleName=&#39;&quot; + bleName + &#39;\&#39;&#39; +
+<i>38</i>&nbsp;                &quot;, ibeaconUuid=&#39;&quot; + ibeaconUuid + &#39;\&#39;&#39; +
+<i>39</i>&nbsp;                &quot;, ibeaconMajor=&quot; + ibeaconMajor +
+<i>40</i>&nbsp;                &quot;, ibeaconMinor=&quot; + ibeaconMinor +
+<i>41</i>&nbsp;                &quot;, ibeaconTxPower=&quot; + ibeaconTxPower +
+<i>42</i>&nbsp;                &quot;, rssi=&quot; + rssi +
+<i>43</i>&nbsp;                &quot;, battery=&quot; + battery +
+<i>44</i>&nbsp;                &quot;, temperature=&quot; + temperature +
+<i>45</i>&nbsp;                &quot;, humidity=&quot; + humidity +
+<i>46</i>&nbsp;                &quot;, rawData=&#39;&quot; + rawData + &#39;\&#39;&#39; +
+<i>47</i>&nbsp;                &quot;, gatewayLoad=&quot; + gatewayLoad +
+<i>48</i>&nbsp;                &quot;, gatewayFree=&quot; + gatewayFree +
+<i>49</i>&nbsp;                &quot;, timestamp=&quot; + timestamp +
+<i>50</i>&nbsp;                &#39;}&#39;;
+<i>51</i>&nbsp;    }
+<i>52</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-04-10 12:55</div>
+</div>
+</body>
+</html>

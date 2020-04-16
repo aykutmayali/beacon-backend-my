@@ -1,0 +1,152 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: TokenUtil</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.minewtech.thingoo.identity</a> ]
+</div>
+
+<h1>Coverage Summary for Class: TokenUtil (com.minewtech.thingoo.identity)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">TokenUtil</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 26)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.minewtech.thingoo.identity;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;
+<i>4</i>&nbsp;import com.minewtech.thingoo.model.user.Role;
+<i>5</i>&nbsp;import com.minewtech.thingoo.model.user.User;
+<i>6</i>&nbsp;import io.jsonwebtoken.Claims;
+<i>7</i>&nbsp;import io.jsonwebtoken.Jwts;
+<i>8</i>&nbsp;import io.jsonwebtoken.SignatureAlgorithm;
+<i>9</i>&nbsp;import org.springframework.security.core.Authentication;
+<i>10</i>&nbsp;import org.springframework.stereotype.Service;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;import javax.servlet.http.HttpServletRequest;
+<i>13</i>&nbsp;import java.util.Date;
+<i>14</i>&nbsp;import java.util.Optional;
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;@Service
+<b class="nc"><i>17</i>&nbsp;public class TokenUtil {</b>
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;    private static final long VALIDITY_TIME_MS = 10 * 24 * 60 * 60 * 1000;// 10 days Validity
+<i>20</i>&nbsp;//    private static final long VALIDITY_TIME_MS =  2 * 60 * 60 * 1000; // 2 hours  validity
+<i>21</i>&nbsp;    private static final String AUTH_HEADER_NAME = &quot;Authorization&quot;;
+<i>22</i>&nbsp;
+<b class="nc"><i>23</i>&nbsp;    private String secret=&quot;thingoo&quot;;</b>
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;    public Optional&lt;Authentication&gt; verifyToken(HttpServletRequest request) {
+<b class="nc"><i>26</i>&nbsp;      final String token = request.getHeader(AUTH_HEADER_NAME);</b>
+<i>27</i>&nbsp;
+<b class="nc"><i>28</i>&nbsp;      if (token != null &amp;&amp; !token.isEmpty()){</b>
+<b class="nc"><i>29</i>&nbsp;        final TokenUser user = parseUserFromToken(token.replace(&quot;Bearer&quot;,&quot;&quot;).trim());</b>
+<b class="nc"><i>30</i>&nbsp;        if (user != null) {</b>
+<b class="nc"><i>31</i>&nbsp;            return  Optional.of(new UserAuthentication(user));</b>
+<i>32</i>&nbsp;        }
+<i>33</i>&nbsp;      }
+<b class="nc"><i>34</i>&nbsp;      return Optional.empty();</b>
+<i>35</i>&nbsp;
+<i>36</i>&nbsp;    }
+<i>37</i>&nbsp;
+<i>38</i>&nbsp;    //Get User Info from the Token
+<i>39</i>&nbsp;    public TokenUser parseUserFromToken(String token){
+<i>40</i>&nbsp;
+<b class="nc"><i>41</i>&nbsp;        Claims claims = Jwts.parser()</b>
+<b class="nc"><i>42</i>&nbsp;            .setSigningKey(secret)</b>
+<b class="nc"><i>43</i>&nbsp;            .parseClaimsJws(token)</b>
+<b class="nc"><i>44</i>&nbsp;            .getBody();</b>
+<i>45</i>&nbsp;
+<b class="nc"><i>46</i>&nbsp;        User user = new User();</b>
+<b class="nc"><i>47</i>&nbsp;        user.setUuid( (String)claims.get(&quot;userId&quot;));</b>
+<i>48</i>&nbsp;        //user.setCustomerId((Integer)claims.get(&quot;customerId&quot;));
+<b class="nc"><i>49</i>&nbsp;        user.setPassword((String)claims.get(&quot;password&quot;));</b>
+<b class="nc"><i>50</i>&nbsp;        user.setRole(Role.valueOf((String)claims.get(&quot;role&quot;)));</b>
+<b class="nc"><i>51</i>&nbsp;        return new TokenUser(user);</b>
+<i>52</i>&nbsp;    }
+<i>53</i>&nbsp;
+<i>54</i>&nbsp;    public String createTokenForUser(TokenUser tokenUser) {
+<b class="nc"><i>55</i>&nbsp;      return createTokenForUser(tokenUser.getUser());</b>
+<i>56</i>&nbsp;    }
+<i>57</i>&nbsp;
+<i>58</i>&nbsp;    public String createTokenForUser(User user) {
+<b class="nc"><i>59</i>&nbsp;      return Jwts.builder()</b>
+<b class="nc"><i>60</i>&nbsp;        .setExpiration(new Date(System.currentTimeMillis() + VALIDITY_TIME_MS))</b>
+<b class="nc"><i>61</i>&nbsp;        .setSubject((String) user.getName())</b>
+<b class="nc"><i>62</i>&nbsp;        .claim(&quot;userId&quot;, user.getUuid())</b>
+<b class="nc"><i>63</i>&nbsp;              .claim(&quot;password&quot;,user.getPassword())</b>
+<b class="nc"><i>64</i>&nbsp;        .claim(&quot;role&quot;, user.getRole().toString())</b>
+<b class="nc"><i>65</i>&nbsp;        .signWith(SignatureAlgorithm.HS256, secret)</b>
+<b class="nc"><i>66</i>&nbsp;        .compact();</b>
+<i>67</i>&nbsp;    }
+<i>68</i>&nbsp;
+<i>69</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-04-10 15:00</div>
+</div>
+</body>
+</html>

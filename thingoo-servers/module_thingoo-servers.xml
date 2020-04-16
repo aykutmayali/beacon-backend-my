@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_thingoo-servers" default="compile.module.thingoo-servers">
+  <dirname property="module.thingoo-servers.basedir" file="${ant.file.module_thingoo-servers}"/>
+  
+  <property name="module.jdk.home.thingoo-servers" value=""/>
+  <property name="module.jdk.bin.thingoo-servers" value=""/>
+  <property name="module.jdk.classpath.thingoo-servers" value=""/>
+  
+  <property name="compiler.args.thingoo-servers" value="-encoding UTF-8 -source 8 -target 1.5 ${compiler.args}"/>
+  
+  <property name="thingoo-servers.output.dir" value="${module.thingoo-servers.basedir}/../out/production/thingoo-servers"/>
+  <property name="thingoo-servers.testoutput.dir" value="${module.thingoo-servers.basedir}/../out/test/thingoo-servers"/>
+  
+  <path id="thingoo-servers.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="thingoo-servers.module.production.classpath"/>
+  
+  <path id="thingoo-servers.runtime.production.module.classpath">
+    <pathelement location="${thingoo-servers.output.dir}"/>
+  </path>
+  
+  <path id="thingoo-servers.module.classpath">
+    <pathelement location="${thingoo-servers.output.dir}"/>
+  </path>
+  
+  <path id="thingoo-servers.runtime.module.classpath">
+    <pathelement location="${thingoo-servers.testoutput.dir}"/>
+    <pathelement location="${thingoo-servers.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.thingoo-servers">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.thingoo-servers">
+    <patternset refid="excluded.from.module.thingoo-servers"/>
+  </patternset>
+  
+  
+  <target name="compile.module.thingoo-servers" depends="compile.module.thingoo-servers.production,compile.module.thingoo-servers.tests" description="Compile module thingoo-servers"/>
+  
+  <target name="compile.module.thingoo-servers.production" depends="register.custom.compilers" description="Compile module thingoo-servers; production classes"/>
+  
+  <target name="compile.module.thingoo-servers.tests" depends="register.custom.compilers,compile.module.thingoo-servers.production" description="compile module thingoo-servers; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.thingoo-servers" description="cleanup module">
+    <delete dir="${thingoo-servers.output.dir}"/>
+    <delete dir="${thingoo-servers.testoutput.dir}"/>
+  </target>
+</project>

@@ -1,0 +1,287 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: UserController</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.minewtech.thingoo.api.user</a> ]
+</div>
+
+<h1>Coverage Summary for Class: UserController (com.minewtech.thingoo.api.user)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UserController</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 101)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.minewtech.thingoo.api.user;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.google.common.base.Strings;
+<i>4</i>&nbsp;import com.minewtech.thingoo.api.Email.RegisterValidateService;
+<i>5</i>&nbsp;import com.minewtech.thingoo.model.response.OperationResponse;
+<i>6</i>&nbsp;import com.minewtech.thingoo.model.response.PageResponse;
+<i>7</i>&nbsp;import com.minewtech.thingoo.model.user.User;
+<i>8</i>&nbsp;import com.minewtech.thingoo.model.user.UserResponse;
+<i>9</i>&nbsp;import com.minewtech.thingoo.repository.UserRepository;
+<i>10</i>&nbsp;import io.swagger.annotations.Api;
+<i>11</i>&nbsp;import io.swagger.annotations.ApiOperation;
+<i>12</i>&nbsp;import io.swagger.annotations.ApiParam;
+<i>13</i>&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+<i>14</i>&nbsp;import org.springframework.data.domain.Page;
+<i>15</i>&nbsp;import org.springframework.data.domain.Pageable;
+<i>16</i>&nbsp;import org.springframework.web.bind.annotation.*;
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;import javax.servlet.http.HttpServletRequest;
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;@RestController
+<i>21</i>&nbsp;@Api(tags = {&quot;User&quot;})
+<b class="nc"><i>22</i>&nbsp;public class UserController {</b>
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;    @Autowired
+<i>25</i>&nbsp;    private UserRepository userRepository;
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;    @Autowired
+<i>28</i>&nbsp;    private UserService userService;
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;    @ApiOperation(value = &quot;Gets current user information&quot;, response = Page.class)
+<i>31</i>&nbsp;    @RequestMapping(value=&quot;/users&quot;, method=RequestMethod.GET)
+<i>32</i>&nbsp;    public PageResponse getUserList(
+<i>33</i>&nbsp;            @ApiParam(value = &quot;&quot;    )               @RequestParam(value = &quot;page&quot;  ,  defaultValue=&quot;1&quot;   ,  required = false) Integer page,
+<i>34</i>&nbsp;            @ApiParam(value = &quot;between 1 to 1000&quot; ) @RequestParam(value = &quot;size&quot;  ,  defaultValue=&quot;20&quot;  ,  required = false) Integer size,
+<i>35</i>&nbsp;            @ApiParam(value = &quot;&quot; ) @RequestParam(value = &quot;sort&quot;  ,  defaultValue=&quot;created_at&quot;  ,  required = false) String sort,
+<i>36</i>&nbsp;            Pageable pageable) {
+<b class="nc"><i>37</i>&nbsp;        PageResponse resp = new PageResponse();</b>
+<b class="nc"><i>38</i>&nbsp;        String loggedInUserId = userService.getLoggedInUserId();</b>
+<b class="nc"><i>39</i>&nbsp;        resp.setLoggedInUserId(loggedInUserId);</b>
+<i>40</i>&nbsp;
+<b class="nc"><i>41</i>&nbsp;        Page&lt;User&gt; r = userRepository.findByUserId(loggedInUserId, pageable);</b>
+<i>42</i>&nbsp;
+<b class="nc"><i>43</i>&nbsp;        resp.setPageStats(r,true);</b>
+<i>44</i>&nbsp;
+<b class="nc"><i>45</i>&nbsp;        return resp;</b>
+<i>46</i>&nbsp;    }
+<i>47</i>&nbsp;
+<i>48</i>&nbsp;    @ApiOperation(value = &quot;Add new user&quot;, response = OperationResponse.class)
+<i>49</i>&nbsp;    @RequestMapping(value = &quot;/users&quot;, method = RequestMethod.POST, produces = {&quot;application/json&quot;})
+<i>50</i>&nbsp;    public OperationResponse postUser(@RequestBody User user, HttpServletRequest req) {
+<b class="nc"><i>51</i>&nbsp;        OperationResponse resp = new OperationResponse();</b>
+<b class="nc"><i>52</i>&nbsp;        User u = userService.getUserByUuid((String) user.getUuid());</b>
+<i>53</i>&nbsp;
+<i>54</i>&nbsp;        //user.setUserId(loggedInUserId);
+<i>55</i>&nbsp;        //resp.setLoggedInUserId(loggedInUserId);
+<b class="nc"><i>56</i>&nbsp;        user.setActive(true);</b>
+<i>57</i>&nbsp;        //System.out.println(&quot;u&quot;+u);
+<i>58</i>&nbsp;
+<i>59</i>&nbsp;        //System.out.println(user);
+<b class="nc"><i>60</i>&nbsp;        User r = userRepository.save(user);</b>
+<i>61</i>&nbsp;
+<b class="nc"><i>62</i>&nbsp;        if (r.getUuid() != &quot;&quot;) {</b>
+<b class="nc"><i>63</i>&nbsp;            resp.setStatus(200);</b>
+<b class="nc"><i>64</i>&nbsp;            resp.setMessage(&quot;Record Added&quot;);</b>
+<b class="nc"><i>65</i>&nbsp;            resp.setData(r);</b>
+<i>66</i>&nbsp;        } else {
+<b class="nc"><i>67</i>&nbsp;            resp.setStatus(400);</b>
+<b class="nc"><i>68</i>&nbsp;            resp.setMessage(&quot;Unable to add Record&quot;);</b>
+<i>69</i>&nbsp;        }
+<b class="nc"><i>70</i>&nbsp;        return resp;</b>
+<i>71</i>&nbsp;    }
+<i>72</i>&nbsp;
+<i>73</i>&nbsp;    @ApiOperation(value = &quot;Add new user&quot;, response = OperationResponse.class)
+<i>74</i>&nbsp;    @RequestMapping(value = &quot;/account/register&quot;, method = RequestMethod.POST, produces = {&quot;application/json&quot;})
+<i>75</i>&nbsp;    public OperationResponse newUser(@RequestBody User user, HttpServletRequest req) {
+<b class="nc"><i>76</i>&nbsp;        OperationResponse resp = new OperationResponse();</b>
+<b class="nc"><i>77</i>&nbsp;       String email= (String) user.getEmail();</b>
+<b class="nc"><i>78</i>&nbsp;        User u=userRepository.findOneByEmail(email).orElseGet( () -&gt; new User());</b>
+<b class="nc"><i>79</i>&nbsp;        System.out.println(&quot;user:==&quot;+u);</b>
+<b class="nc"><i>80</i>&nbsp;        if (u.getEmail()==&quot;&quot;){</b>
+<b class="nc"><i>81</i>&nbsp;        user.setUserId(&quot;0cbafa88e7a94776bc8bb3fa5bfe58e3&quot;);</b>
+<b class="nc"><i>82</i>&nbsp;        User r = userRepository.save(user);</b>
+<b class="nc"><i>83</i>&nbsp;            RegisterValidateService.processregister(email);</b>
+<b class="nc"><i>84</i>&nbsp;        if (r.getUuid() != &quot;&quot;) {</b>
+<b class="nc"><i>85</i>&nbsp;            resp.setStatus(200);</b>
+<b class="nc"><i>86</i>&nbsp;            resp.setMessage(&quot;Record Added&quot;);</b>
+<b class="nc"><i>87</i>&nbsp;            resp.setData(r);</b>
+<i>88</i>&nbsp;        } else {
+<b class="nc"><i>89</i>&nbsp;            resp.setStatus(400);</b>
+<b class="nc"><i>90</i>&nbsp;            resp.setMessage(&quot;Unable to add Record&quot;);</b>
+<b class="nc"><i>91</i>&nbsp;        }}else {</b>
+<b class="nc"><i>92</i>&nbsp;                resp.setStatus(450);</b>
+<b class="nc"><i>93</i>&nbsp;                resp.setMessage(&quot;This account exists&quot;);</b>
+<i>94</i>&nbsp;            }
+<b class="nc"><i>95</i>&nbsp;        return resp;</b>
+<i>96</i>&nbsp;    }
+<i>97</i>&nbsp;
+<i>98</i>&nbsp;
+<i>99</i>&nbsp;    @ApiOperation(value = &quot;Gets current user information&quot;, response = OperationResponse.class)
+<i>100</i>&nbsp;    @RequestMapping(value=&quot;/users/{uuid}&quot;, method=RequestMethod.GET, produces = {&quot;application/json&quot;})
+<i>101</i>&nbsp;    public OperationResponse getUser(@PathVariable String uuid, HttpServletRequest req) {
+<b class="nc"><i>102</i>&nbsp;        OperationResponse resp = new OperationResponse();</b>
+<b class="nc"><i>103</i>&nbsp;        String loggedInUserId = userService.getLoggedInUserId();</b>
+<b class="nc"><i>104</i>&nbsp;        resp.setLoggedInUserId(loggedInUserId);</b>
+<i>105</i>&nbsp;
+<i>106</i>&nbsp;        User user;
+<b class="nc"><i>107</i>&nbsp;        boolean provideUserDetails = false;</b>
+<i>108</i>&nbsp;
+<b class="nc"><i>109</i>&nbsp;        if (Strings.isNullOrEmpty(uuid)) {</b>
+<b class="nc"><i>110</i>&nbsp;            provideUserDetails = true;</b>
+<b class="nc"><i>111</i>&nbsp;            user = userService.getLoggedInUser();</b>
+<b class="nc"><i>112</i>&nbsp;        } else if (loggedInUserId.equals(uuid)) {</b>
+<b class="nc"><i>113</i>&nbsp;            provideUserDetails = true;</b>
+<b class="nc"><i>114</i>&nbsp;            user = userService.getLoggedInUser();</b>
+<i>115</i>&nbsp;        } else {
+<i>116</i>&nbsp;            //Check if the current user is superuser then provide the details of requested user
+<b class="nc"><i>117</i>&nbsp;            provideUserDetails = true;</b>
+<b class="nc"><i>118</i>&nbsp;            user =userRepository.findOneByUuid(uuid).orElse(null);</b>
+<i>119</i>&nbsp;        }
+<i>120</i>&nbsp;
+<b class="nc"><i>121</i>&nbsp;        if (provideUserDetails &amp;&amp; user != null) {</b>
+<b class="nc"><i>122</i>&nbsp;            resp.setStatus(200);</b>
+<b class="nc"><i>123</i>&nbsp;            resp.setData(user);</b>
+<b class="nc"><i>124</i>&nbsp;        } else if (user == null) {</b>
+<b class="nc"><i>125</i>&nbsp;            resp.setStatus(404);</b>
+<b class="nc"><i>126</i>&nbsp;            resp.setMessage(&quot;No Record Exist&quot;);</b>
+<i>127</i>&nbsp;        } else {
+<b class="nc"><i>128</i>&nbsp;            resp.setStatus(401);</b>
+<b class="nc"><i>129</i>&nbsp;            resp.setMessage(&quot;No Access&quot;);</b>
+<i>130</i>&nbsp;        }
+<i>131</i>&nbsp;
+<b class="nc"><i>132</i>&nbsp;        return resp;</b>
+<i>133</i>&nbsp;    }
+<i>134</i>&nbsp;
+<i>135</i>&nbsp;    @ApiOperation(value = &quot;Edit current user information&quot;, response = OperationResponse.class)
+<i>136</i>&nbsp;    @RequestMapping(value=&quot;/users/{uuid}&quot;, method=RequestMethod.PUT)
+<i>137</i>&nbsp;    public OperationResponse putUser(@PathVariable String uuid, @RequestBody User user) {
+<b class="nc"><i>138</i>&nbsp;        OperationResponse resp = new OperationResponse();</b>
+<b class="nc"><i>139</i>&nbsp;        String loggedInUserId = userService.getLoggedInUserId();</b>
+<b class="nc"><i>140</i>&nbsp;        resp.setLoggedInUserId(loggedInUserId);</b>
+<i>141</i>&nbsp;
+<b class="nc"><i>142</i>&nbsp;        if (this.userRepository.exists(uuid) ){</b>
+<b class="nc"><i>143</i>&nbsp;            user.setUuid(uuid);</b>
+<b class="nc"><i>144</i>&nbsp;            user.setActive(true);</b>
+<b class="nc"><i>145</i>&nbsp;            User r = this.userRepository.save(user);</b>
+<b class="nc"><i>146</i>&nbsp;            resp.setStatus(200);</b>
+<b class="nc"><i>147</i>&nbsp;            resp.setMessage(&quot;Record Updated&quot;);</b>
+<b class="nc"><i>148</i>&nbsp;            resp.setData(r);</b>
+<b class="nc"><i>149</i>&nbsp;        }</b>
+<i>150</i>&nbsp;        else{
+<b class="nc"><i>151</i>&nbsp;            resp.setStatus(404);</b>
+<b class="nc"><i>152</i>&nbsp;            resp.setMessage(&quot;No Record Exist&quot;);</b>
+<i>153</i>&nbsp;        }
+<i>154</i>&nbsp;
+<b class="nc"><i>155</i>&nbsp;        return resp;</b>
+<i>156</i>&nbsp;    }
+<i>157</i>&nbsp;
+<i>158</i>&nbsp;    @ApiOperation(value = &quot;Delete current user&quot;, response = OperationResponse.class)
+<i>159</i>&nbsp;    @RequestMapping(value=&quot;/users/{uuid}&quot;, method=RequestMethod.DELETE)
+<i>160</i>&nbsp;    public OperationResponse deleteUser(@PathVariable String uuid) {
+<b class="nc"><i>161</i>&nbsp;        OperationResponse resp = new OperationResponse();</b>
+<b class="nc"><i>162</i>&nbsp;        String loggedInUserId = userService.getLoggedInUserId();</b>
+<b class="nc"><i>163</i>&nbsp;        resp.setLoggedInUserId(loggedInUserId);</b>
+<i>164</i>&nbsp;
+<b class="nc"><i>165</i>&nbsp;        if (this.userRepository.exists(uuid) ){</b>
+<b class="nc"><i>166</i>&nbsp;            User r =userRepository.findOneByUuid(uuid).orElse(null);</b>
+<b class="nc"><i>167</i>&nbsp;            this.userRepository.delete(uuid);</b>
+<b class="nc"><i>168</i>&nbsp;            resp.setStatus(200);</b>
+<b class="nc"><i>169</i>&nbsp;            resp.setMessage(&quot;Record Deleted&quot;);</b>
+<b class="nc"><i>170</i>&nbsp;            resp.setData(r);</b>
+<b class="nc"><i>171</i>&nbsp;        }</b>
+<i>172</i>&nbsp;        else{
+<b class="nc"><i>173</i>&nbsp;            resp.setStatus(404);</b>
+<b class="nc"><i>174</i>&nbsp;            resp.setMessage(&quot;No Record Exist&quot;);</b>
+<i>175</i>&nbsp;        }
+<b class="nc"><i>176</i>&nbsp;        return resp;</b>
+<i>177</i>&nbsp;    }
+<i>178</i>&nbsp;    @RequestMapping(value = &quot;/account/activate&quot;, method = RequestMethod.GET)
+<i>179</i>&nbsp;    public OperationResponse actiUser(HttpServletRequest req) {
+<b class="nc"><i>180</i>&nbsp;        OperationResponse resp = new OperationResponse();</b>
+<b class="nc"><i>181</i>&nbsp;        String email=req.getParameter(&quot;email&quot;);</b>
+<b class="nc"><i>182</i>&nbsp;        User u=userRepository.findOneByEmail(email).orElseGet( () -&gt; new User());</b>
+<i>183</i>&nbsp;
+<b class="nc"><i>184</i>&nbsp;        System.out.println(u);</b>
+<b class="nc"><i>185</i>&nbsp;        if (u!=null){</b>
+<b class="nc"><i>186</i>&nbsp;            if (u.isActive()==false)</b>
+<b class="nc"><i>187</i>&nbsp;                    u.setActive(true);</b>
+<b class="nc"><i>188</i>&nbsp;                User r = userRepository.save(u);</b>
+<i>189</i>&nbsp;
+<b class="nc"><i>190</i>&nbsp;            if (r.getUuid() != &quot;&quot;) {</b>
+<b class="nc"><i>191</i>&nbsp;                resp.setStatus(200);</b>
+<b class="nc"><i>192</i>&nbsp;                resp.setMessage(&quot;Record Added&quot;);</b>
+<i>193</i>&nbsp;            } else {
+<b class="nc"><i>194</i>&nbsp;                resp.setStatus(400);</b>
+<b class="nc"><i>195</i>&nbsp;                resp.setMessage(&quot;Unable to add Record&quot;);</b>
+<b class="nc"><i>196</i>&nbsp;            }}else {</b>
+<b class="nc"><i>197</i>&nbsp;            resp.setStatus(450);</b>
+<b class="nc"><i>198</i>&nbsp;            resp.setMessage(&quot;The mailbox is not registered (the mailbox address does not exist)!&quot;);</b>
+<i>199</i>&nbsp;        }
+<b class="nc"><i>200</i>&nbsp;        return resp;</b>
+<i>201</i>&nbsp;    }
+<i>202</i>&nbsp;
+<i>203</i>&nbsp;
+<i>204</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-04-16 17:44</div>
+</div>
+</body>
+</html>

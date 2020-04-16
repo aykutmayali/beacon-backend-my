@@ -1,0 +1,431 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: StatusController</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.minewtech.thingoo.api.status</a> ]
+</div>
+
+<h1>Coverage Summary for Class: StatusController (com.minewtech.thingoo.api.status)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">StatusController</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 73)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">StatusController$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 30)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 103)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.minewtech.thingoo.api.status;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;
+<i>4</i>&nbsp;import com.minewtech.thingoo.api.user.UserService;
+<i>5</i>&nbsp;import com.minewtech.thingoo.model.device.Device;
+<i>6</i>&nbsp;import com.minewtech.thingoo.model.device.DeviceType;
+<i>7</i>&nbsp;import com.minewtech.thingoo.model.gateway.Gateway;
+<i>8</i>&nbsp;import com.minewtech.thingoo.model.response.OperationResponse;
+<i>9</i>&nbsp;import com.minewtech.thingoo.model.response.PageResponse;
+<i>10</i>&nbsp;import com.minewtech.thingoo.model.status.Status;
+<i>11</i>&nbsp;import com.minewtech.thingoo.mqtt.model.StatusMessage;
+<i>12</i>&nbsp;import com.minewtech.thingoo.mqtt.service.StatusService;
+<i>13</i>&nbsp;import com.minewtech.thingoo.repository.DeviceRepository;
+<i>14</i>&nbsp;import com.minewtech.thingoo.repository.GatewayRepository;
+<i>15</i>&nbsp;import com.minewtech.thingoo.repository.StatusRepository;
+<i>16</i>&nbsp;import io.swagger.annotations.Api;
+<i>17</i>&nbsp;import io.swagger.annotations.ApiOperation;
+<i>18</i>&nbsp;import io.swagger.annotations.ApiParam;
+<i>19</i>&nbsp;import org.apache.commons.lang3.StringUtils;
+<i>20</i>&nbsp;import org.influxdb.dto.Point;
+<i>21</i>&nbsp;import org.influxdb.dto.Query;
+<i>22</i>&nbsp;import org.influxdb.dto.QueryResult;
+<i>23</i>&nbsp;import org.slf4j.Logger;
+<i>24</i>&nbsp;import org.slf4j.LoggerFactory;
+<i>25</i>&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+<i>26</i>&nbsp;import org.springframework.data.domain.Page;
+<i>27</i>&nbsp;import org.springframework.data.domain.Pageable;
+<i>28</i>&nbsp;import org.springframework.data.domain.Sort;
+<i>29</i>&nbsp;import org.springframework.data.influxdb.InfluxDBTemplate;
+<i>30</i>&nbsp;import org.springframework.data.jpa.domain.Specification;
+<i>31</i>&nbsp;import org.springframework.data.jpa.domain.Specifications;
+<i>32</i>&nbsp;import org.springframework.data.web.PageableDefault;
+<i>33</i>&nbsp;import org.springframework.format.annotation.DateTimeFormat;
+<i>34</i>&nbsp;import org.springframework.web.bind.annotation.*;
+<i>35</i>&nbsp;
+<i>36</i>&nbsp;import javax.persistence.criteria.*;
+<i>37</i>&nbsp;import javax.servlet.http.HttpServletRequest;
+<i>38</i>&nbsp;import java.util.*;
+<i>39</i>&nbsp;
+<i>40</i>&nbsp;@RestController
+<i>41</i>&nbsp;@Api(tags = {&quot;Status&quot;})
+<b class="nc"><i>42</i>&nbsp;public class StatusController {</b>
+<i>43</i>&nbsp;
+<i>44</i>&nbsp;    //protected static final Logger LOG = LoggerFactory.getLogger(StatusController.class);
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;    @Autowired
+<i>47</i>&nbsp;    private InfluxDBTemplate&lt;Point&gt; influxDBTemplate;
+<i>48</i>&nbsp;
+<i>49</i>&nbsp;    @Autowired
+<i>50</i>&nbsp;    private StatusService statusService;
+<i>51</i>&nbsp;
+<i>52</i>&nbsp;    @Autowired
+<i>53</i>&nbsp;    private StatusRepository statusRepository;
+<i>54</i>&nbsp;
+<i>55</i>&nbsp;    @Autowired
+<i>56</i>&nbsp;    private GatewayRepository gatewayRepository;
+<i>57</i>&nbsp;
+<i>58</i>&nbsp;    @Autowired
+<i>59</i>&nbsp;    private DeviceRepository deviceRepository;
+<i>60</i>&nbsp;
+<i>61</i>&nbsp;    @Autowired
+<i>62</i>&nbsp;    private UserService userService;
+<i>63</i>&nbsp;
+<i>64</i>&nbsp;    @RequestMapping(value=&quot;/query&quot;, method= RequestMethod.GET)
+<i>65</i>&nbsp;    public PageResponse query(
+<i>66</i>&nbsp;            @ApiParam(value = &quot;&quot; ) @RequestParam(value = &quot;q&quot;  ,  required = false) String q) {
+<b class="nc"><i>67</i>&nbsp;        PageResponse resp = new PageResponse();</b>
+<b class="nc"><i>68</i>&nbsp;        final QueryResult queryResult = influxDBTemplate.getConnection().query(new Query(q, influxDBTemplate.getDatabase()));</b>
+<i>69</i>&nbsp;        //LOG.info(queryResult.toString());
+<b class="nc"><i>70</i>&nbsp;        resp.setData(queryResult.getResults());</b>
+<b class="nc"><i>71</i>&nbsp;        return resp;</b>
+<i>72</i>&nbsp;
+<i>73</i>&nbsp;    }
+<i>74</i>&nbsp;
+<i>75</i>&nbsp;    @ApiOperation(value = &quot;Gets current status information&quot;, response = Page.class)
+<i>76</i>&nbsp;    @RequestMapping(value=&quot;/statuses&quot;, method= RequestMethod.GET)
+<i>77</i>&nbsp;    public PageResponse getStatusList(
+<i>78</i>&nbsp;            @ApiParam(value = &quot;&quot; ) @RequestParam(value = &quot;gatewayMac&quot;  ,  required = false) String gatewayMac,
+<i>79</i>&nbsp;            @ApiParam(value = &quot;&quot; ) @RequestParam(value = &quot;mac&quot;  ,  required = false) String mac,
+<i>80</i>&nbsp;            @ApiParam(value = &quot;&quot; ) @RequestParam(value = &quot;type&quot;  ,  required = false) DeviceType type,
+<i>81</i>&nbsp;            @ApiParam(value = &quot;&quot; ) @RequestParam(value = &quot;excludeType&quot;  ,  required = false) DeviceType excludeType,
+<i>82</i>&nbsp;            @ApiParam(value = &quot;&quot; ) @RequestParam(value = &quot;timeRange&quot;  ,  required = false) Long timeRange,
+<i>83</i>&nbsp;//            @ApiParam(value = &quot;&quot; ) @RequestParam(value =&quot;startTime&quot;) @DateTimeFormat(pattern=&quot;yyyy-MM-dd&#39;T&#39;HH:mm:ssZ&quot;) Date startTime,
+<i>84</i>&nbsp;        @ApiParam(value = &quot;&quot; ) @PageableDefault(page = 0, size = 10, sort = &quot;updatedAt&quot;, direction = Sort.Direction.DESC) Pageable pageable){
+<b class="nc"><i>85</i>&nbsp;        PageResponse resp = new PageResponse();</b>
+<b class="nc"><i>86</i>&nbsp;        String loggedInUserId = userService.getLoggedInUserId();</b>
+<i>87</i>&nbsp;
+<i>88</i>&nbsp;        Page&lt;Status&gt; r;
+<i>89</i>&nbsp;//        r = statusRepository.findByUserId(loggedInUserId, pageable);
+<b class="nc"><i>90</i>&nbsp;        r = statusRepository.findAll(Specifications.where(getWhereClause(loggedInUserId, gatewayMac, mac, type, excludeType, timeRange)), pageable);</b>
+<i>91</i>&nbsp;
+<b class="nc"><i>92</i>&nbsp;        if (r.hasContent()){</b>
+<i>93</i>&nbsp;
+<i>94</i>&nbsp;           // LOG.debug(&quot;page[1]:&quot; + r.getContent());
+<b class="nc"><i>95</i>&nbsp;            List&lt;String&gt; gatewayMacs = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>96</i>&nbsp;            List&lt;String&gt; deviceMacs = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>97</i>&nbsp;            for (int i = 0; i &lt; r.getContent().size(); i++) {</b>
+<b class="nc"><i>98</i>&nbsp;                Status item = r.getContent().get(i);</b>
+<b class="nc"><i>99</i>&nbsp;                gatewayMacs.add(item.getGatewayMac());</b>
+<b class="nc"><i>100</i>&nbsp;                deviceMacs.add(item.getMac());</b>
+<i>101</i>&nbsp;            }
+<i>102</i>&nbsp;
+<b class="nc"><i>103</i>&nbsp;            List&lt;Gateway&gt; gateways = gatewayRepository.findAllByUserIdAndMacIn(loggedInUserId, gatewayMacs);</b>
+<b class="nc"><i>104</i>&nbsp;            List&lt;Device&gt; devices = deviceRepository.findByUserIdAndMacIn(loggedInUserId, deviceMacs);</b>
+<i>105</i>&nbsp;
+<i>106</i>&nbsp;           // LOG.debug(&quot;gateways[1]:&quot; + gateways);
+<i>107</i>&nbsp;            //LOG.debug(&quot;devices[1]:&quot; + devices);
+<i>108</i>&nbsp;
+<b class="nc"><i>109</i>&nbsp;            Map&lt;String, Gateway&gt; gatewayMap = new HashMap&lt;&gt;();</b>
+<b class="nc"><i>110</i>&nbsp;            Map&lt;String, Device&gt; deviceMap = new HashMap&lt;&gt;();</b>
+<i>111</i>&nbsp;
+<b class="nc"><i>112</i>&nbsp;            for (int i = 0; i &lt; gateways.size(); i++) {</b>
+<b class="nc"><i>113</i>&nbsp;                gatewayMap.put(gateways.get(i).getMac(), gateways.get(i));</b>
+<i>114</i>&nbsp;            }
+<b class="nc"><i>115</i>&nbsp;            for (int i = 0; i &lt; devices.size(); i++) {</b>
+<b class="nc"><i>116</i>&nbsp;                deviceMap.put(devices.get(i).getMac(), devices.get(i));</b>
+<i>117</i>&nbsp;            }
+<i>118</i>&nbsp;
+<b class="nc"><i>119</i>&nbsp;            for (int i = 0; i &lt; r.getContent().size(); i++) {</b>
+<b class="nc"><i>120</i>&nbsp;                Status item = r.getContent().get(i);</b>
+<b class="nc"><i>121</i>&nbsp;                item.setDevice(deviceMap.get(item.getMac()));</b>
+<b class="nc"><i>122</i>&nbsp;                item.setGateway(gatewayMap.get(item.getGatewayMac()));</b>
+<i>123</i>&nbsp;            }
+<i>124</i>&nbsp;
+<i>125</i>&nbsp;            //LOG.debug(&quot;page[2]:&quot; + r.getContent());
+<i>126</i>&nbsp;        }
+<i>127</i>&nbsp;
+<b class="nc"><i>128</i>&nbsp;        resp.setPageStats(r,true);</b>
+<i>129</i>&nbsp;
+<b class="nc"><i>130</i>&nbsp;        return resp;</b>
+<i>131</i>&nbsp;    }
+<i>132</i>&nbsp;
+<i>133</i>&nbsp;    private Specification&lt;Status&gt; getWhereClause(String userId, String gatewayMac, String mac, DeviceType type, DeviceType excludeType, Long timeRange) {
+<b class="nc"><i>134</i>&nbsp;        return new Specification&lt;Status&gt;() {</b>
+<i>135</i>&nbsp;            @Override
+<i>136</i>&nbsp;            public Predicate toPredicate(Root&lt;Status&gt; r, CriteriaQuery&lt;?&gt; q, CriteriaBuilder cb) {
+<i>137</i>&nbsp;//                Join&lt;Status, Device&gt; deviceJoin = r.join(r.getModel().getSingularAttribute(&quot;device&quot;, Device.class));
+<i>138</i>&nbsp;//                Join&lt;Status, Gateway&gt; gatewayJoin = r.join(r.getModel().getSingularAttribute(&quot;gateway&quot;, Gateway.class));
+<b class="nc"><i>139</i>&nbsp;                Predicate predicate = cb.conjunction();</b>
+<i>140</i>&nbsp;
+<b class="nc"><i>141</i>&nbsp;                if (StringUtils.isNotBlank(userId)) {</b>
+<i>142</i>&nbsp;
+<b class="nc"><i>143</i>&nbsp;                    List&lt;Gateway&gt; gateways = gatewayRepository.findAllByUserId(userId);</b>
+<i>144</i>&nbsp;
+<b class="nc"><i>145</i>&nbsp;                    if (gateways.size() &gt; 0){</b>
+<i>146</i>&nbsp;                        //in????
+<b class="nc"><i>147</i>&nbsp;                        CriteriaBuilder.In&lt;String&gt; in = cb.in(r.get(&quot;gatewayMac&quot;).as(String.class));</b>
+<b class="nc"><i>148</i>&nbsp;                        for (int i = 0; i &lt; gateways.size(); i++) {</b>
+<b class="nc"><i>149</i>&nbsp;                            in.value(gateways.get(i).getMac());</b>
+<i>150</i>&nbsp;                        }
+<b class="nc"><i>151</i>&nbsp;                        predicate.getExpressions().add(in);</b>
+<b class="nc"><i>152</i>&nbsp;                    } else {</b>
+<b class="nc"><i>153</i>&nbsp;                        predicate.getExpressions().add(</b>
+<b class="nc"><i>154</i>&nbsp;                                cb.equal(r.&lt;String&gt;get(&quot;gatewayMac&quot;), &quot;&quot;)</b>
+<i>155</i>&nbsp;                        );
+<i>156</i>&nbsp;                    }
+<i>157</i>&nbsp;                }
+<i>158</i>&nbsp;
+<i>159</i>&nbsp;
+<b class="nc"><i>160</i>&nbsp;                if (gatewayMac != null &amp;&amp; !gatewayMac.isEmpty()) {</b>
+<b class="nc"><i>161</i>&nbsp;                    predicate.getExpressions().add(</b>
+<b class="nc"><i>162</i>&nbsp;                            cb.equal(r.&lt;String&gt;get(&quot;gatewayMac&quot;), gatewayMac.toUpperCase())</b>
+<i>163</i>&nbsp;                    );
+<i>164</i>&nbsp;
+<i>165</i>&nbsp;                }
+<i>166</i>&nbsp;
+<b class="nc"><i>167</i>&nbsp;                if (mac != null &amp;&amp; !mac.isEmpty()) {</b>
+<b class="nc"><i>168</i>&nbsp;                    predicate.getExpressions().add(</b>
+<b class="nc"><i>169</i>&nbsp;                            cb.equal(r.&lt;String&gt;get(&quot;mac&quot;), mac.toUpperCase())</b>
+<i>170</i>&nbsp;                    );
+<i>171</i>&nbsp;                }
+<i>172</i>&nbsp;
+<b class="nc"><i>173</i>&nbsp;                if (type != null) {</b>
+<b class="nc"><i>174</i>&nbsp;                    predicate.getExpressions().add(</b>
+<b class="nc"><i>175</i>&nbsp;                            cb.equal(r.&lt;DeviceType&gt;get(&quot;type&quot;), type)</b>
+<i>176</i>&nbsp;                    );
+<i>177</i>&nbsp;                }
+<i>178</i>&nbsp;
+<b class="nc"><i>179</i>&nbsp;                if (excludeType != null) {</b>
+<b class="nc"><i>180</i>&nbsp;                    predicate.getExpressions().add(</b>
+<b class="nc"><i>181</i>&nbsp;                            cb.notEqual(r.&lt;DeviceType&gt;get(&quot;type&quot;), excludeType)</b>
+<i>182</i>&nbsp;                    );
+<i>183</i>&nbsp;                }
+<i>184</i>&nbsp;
+<i>185</i>&nbsp;
+<i>186</i>&nbsp;//                if (StringUtils.isNotBlank(userId)) {
+<i>187</i>&nbsp;//                    predicate.getExpressions().add(cb.or(
+<i>188</i>&nbsp;//                            cb.equal(gatewayJoin.get(&quot;userId&quot;).as(String.class), userId), cb.equal(gatewayJoin.get(&quot;userId&quot;).as(String.class), null))
+<i>189</i>&nbsp;//                    );
+<i>190</i>&nbsp;//                    predicate.getExpressions().add(cb.or(cb.equal(deviceJoin.get(&quot;userId&quot;).as(String.class), userId), cb.equal(deviceJoin.get(&quot;userId&quot;).as(String.class), null))
+<i>191</i>&nbsp;//
+<i>192</i>&nbsp;//                    );
+<i>193</i>&nbsp;//                }
+<i>194</i>&nbsp;
+<b class="nc"><i>195</i>&nbsp;                if (timeRange != null) {</b>
+<b class="nc"><i>196</i>&nbsp;                Date endTime = Calendar.getInstance().getTime();</b>
+<b class="nc"><i>197</i>&nbsp;                Date startTime = new Date(endTime.getTime() - timeRange*1000);</b>
+<i>198</i>&nbsp;                //LOG.debug(&quot;Between:&quot; + startTime + &quot;~&quot; + endTime);
+<b class="nc"><i>199</i>&nbsp;                    predicate.getExpressions().add(</b>
+<b class="nc"><i>200</i>&nbsp;                            cb.between(r.&lt;Date&gt;get(&quot;updatedAt&quot;), startTime, endTime)</b>
+<i>201</i>&nbsp;                    );
+<i>202</i>&nbsp;                }
+<i>203</i>&nbsp;
+<i>204</i>&nbsp;
+<b class="nc"><i>205</i>&nbsp;                return predicate;</b>
+<i>206</i>&nbsp;            }
+<i>207</i>&nbsp;        };
+<i>208</i>&nbsp;    }
+<i>209</i>&nbsp;
+<i>210</i>&nbsp;
+<i>211</i>&nbsp;
+<i>212</i>&nbsp;    @ApiOperation(value = &quot;Add new status&quot;, response = OperationResponse.class)
+<i>213</i>&nbsp;    @RequestMapping(value = &quot;/statuses&quot;, method = RequestMethod.POST, produces = {&quot;application/json&quot;})
+<i>214</i>&nbsp;    public OperationResponse postStatus(@RequestBody Status status, HttpServletRequest req) {
+<b class="nc"><i>215</i>&nbsp;        OperationResponse resp = new OperationResponse();</b>
+<b class="nc"><i>216</i>&nbsp;        String loggedInUserId = userService.getLoggedInUserId();</b>
+<i>217</i>&nbsp;//        resp.setLoggedInUserId(loggedInUserId);
+<i>218</i>&nbsp;
+<i>219</i>&nbsp;//        status.setUserId(loggedInUserId);
+<i>220</i>&nbsp;
+<b class="nc"><i>221</i>&nbsp;        Status r = statusRepository.save(status);</b>
+<i>222</i>&nbsp;
+<b class="nc"><i>223</i>&nbsp;        if (r.getUuid() != &quot;&quot;) {</b>
+<b class="nc"><i>224</i>&nbsp;            resp.setStatus(200);</b>
+<b class="nc"><i>225</i>&nbsp;            resp.setMessage(&quot;Record Added&quot;);</b>
+<b class="nc"><i>226</i>&nbsp;            resp.setData(r);</b>
+<i>227</i>&nbsp;        } else {
+<b class="nc"><i>228</i>&nbsp;            resp.setStatus(400);</b>
+<b class="nc"><i>229</i>&nbsp;            resp.setMessage(&quot;Unable to add Record&quot;);</b>
+<i>230</i>&nbsp;        }
+<b class="nc"><i>231</i>&nbsp;        return resp;</b>
+<i>232</i>&nbsp;    }
+<i>233</i>&nbsp;
+<i>234</i>&nbsp;
+<i>235</i>&nbsp;    /*    @ApiOperation(value = &quot;Add new status&quot;, response = OperationResponse.class)
+<i>236</i>&nbsp;      @RequestMapping(value = &quot;/gw/{gatewayMac}/status&quot;, method = RequestMethod.POST, produces = {&quot;application/json&quot;})
+<i>237</i>&nbsp;       public OperationResponse postGatewayStatus(@PathVariable String gatewayMac, @RequestBody List&lt;StatusMessage&gt; statuses, HttpServletRequest req) {
+<i>238</i>&nbsp;           OperationResponse resp = new OperationResponse();
+<i>239</i>&nbsp;
+<i>240</i>&nbsp;   //        int i = 0;
+<i>241</i>&nbsp;   //        for (Status status:statuses
+<i>242</i>&nbsp;   //             ) {
+<i>243</i>&nbsp;   //            status.setGatewayMac(gatewayMac.toUpperCase());
+<i>244</i>&nbsp;   //            Status r = statusRepository.save(status);
+<i>245</i>&nbsp;   //            LOG.debug(&quot;statuses[&quot; +i + &quot;]&quot; + status.toString());
+<i>246</i>&nbsp;   //            i++;
+<i>247</i>&nbsp;   //        }
+<i>248</i>&nbsp;           if(gatewayMac != null)
+<i>249</i>&nbsp;               gatewayMac = gatewayMac.toUpperCase();
+<i>250</i>&nbsp;
+<i>251</i>&nbsp;           statusService.handleEvenet(gatewayMac, statuses);
+<i>252</i>&nbsp;
+<i>253</i>&nbsp;           resp.setStatus(200);
+<i>254</i>&nbsp;           resp.setMessage(&quot;Record Added&quot;);
+<i>255</i>&nbsp;           return resp;
+<i>256</i>&nbsp;       }
+<i>257</i>&nbsp;   */
+<i>258</i>&nbsp;    @ApiOperation(value = &quot;Gets current status information&quot;, response = OperationResponse.class)
+<i>259</i>&nbsp;    @RequestMapping(value=&quot;/statuses/{uuid}&quot;, method=RequestMethod.GET, produces = {&quot;application/json&quot;})
+<i>260</i>&nbsp;    public OperationResponse getStatus(@PathVariable String uuid, HttpServletRequest req) {
+<b class="nc"><i>261</i>&nbsp;        OperationResponse resp = new OperationResponse();</b>
+<b class="nc"><i>262</i>&nbsp;        String loggedInUserId = userService.getLoggedInUserId();</b>
+<i>263</i>&nbsp;//        resp.setLoggedInUserId(loggedInUserId);
+<i>264</i>&nbsp;
+<b class="nc"><i>265</i>&nbsp;        Status status =statusRepository.findOneByUuid(uuid).orElse(null);</b>
+<i>266</i>&nbsp;
+<b class="nc"><i>267</i>&nbsp;        if (status != null) {</b>
+<b class="nc"><i>268</i>&nbsp;            resp.setStatus(200);</b>
+<b class="nc"><i>269</i>&nbsp;            resp.setData(status);</b>
+<i>270</i>&nbsp;        } else {
+<b class="nc"><i>271</i>&nbsp;            resp.setStatus(404);</b>
+<b class="nc"><i>272</i>&nbsp;            resp.setMessage(&quot;No Record Exist&quot;);</b>
+<i>273</i>&nbsp;        }
+<i>274</i>&nbsp;
+<b class="nc"><i>275</i>&nbsp;        return resp;</b>
+<i>276</i>&nbsp;    }
+<i>277</i>&nbsp;
+<i>278</i>&nbsp;    @ApiOperation(value = &quot;Edit current status information&quot;, response = OperationResponse.class)
+<i>279</i>&nbsp;    @RequestMapping(value=&quot;/statuses/{uuid}&quot;, method=RequestMethod.PUT)
+<i>280</i>&nbsp;    public OperationResponse putStatus(@PathVariable String uuid, @RequestBody Status status) {
+<b class="nc"><i>281</i>&nbsp;        OperationResponse resp = new OperationResponse();</b>
+<b class="nc"><i>282</i>&nbsp;        String loggedInUserId = userService.getLoggedInUserId();</b>
+<i>283</i>&nbsp;//        resp.setLoggedInUserId(loggedInUserId);
+<i>284</i>&nbsp;
+<b class="nc"><i>285</i>&nbsp;        if (this.statusRepository.exists(uuid) ){</b>
+<b class="nc"><i>286</i>&nbsp;            status.setUuid(uuid);</b>
+<i>287</i>&nbsp;//            status.setUserId(loggedInUserId);
+<b class="nc"><i>288</i>&nbsp;            Status r = this.statusRepository.save(status);</b>
+<b class="nc"><i>289</i>&nbsp;            resp.setStatus(200);</b>
+<b class="nc"><i>290</i>&nbsp;            resp.setMessage(&quot;Record Updated&quot;);</b>
+<b class="nc"><i>291</i>&nbsp;            resp.setData(r);</b>
+<b class="nc"><i>292</i>&nbsp;        }</b>
+<i>293</i>&nbsp;        else{
+<b class="nc"><i>294</i>&nbsp;            resp.setStatus(404);</b>
+<b class="nc"><i>295</i>&nbsp;            resp.setMessage(&quot;No Record Exist&quot;);</b>
+<i>296</i>&nbsp;        }
+<i>297</i>&nbsp;
+<b class="nc"><i>298</i>&nbsp;        return resp;</b>
+<i>299</i>&nbsp;    }
+<i>300</i>&nbsp;
+<i>301</i>&nbsp;    @ApiOperation(value = &quot;Delete current status&quot;, response = OperationResponse.class)
+<i>302</i>&nbsp;    @RequestMapping(value=&quot;/statuses/{uuid}&quot;, method=RequestMethod.DELETE)
+<i>303</i>&nbsp;    public OperationResponse deleteStatus(@PathVariable String uuid) {
+<b class="nc"><i>304</i>&nbsp;        OperationResponse resp = new OperationResponse();</b>
+<b class="nc"><i>305</i>&nbsp;        String loggedInUserId = userService.getLoggedInUserId();</b>
+<i>306</i>&nbsp;//        resp.setLoggedInUserId(loggedInUserId);
+<i>307</i>&nbsp;
+<b class="nc"><i>308</i>&nbsp;        if (this.statusRepository.exists(uuid) ){</b>
+<b class="nc"><i>309</i>&nbsp;            Status r =statusRepository.findOneByUuid(uuid).orElse(null);</b>
+<b class="nc"><i>310</i>&nbsp;            this.statusRepository.delete(uuid);</b>
+<b class="nc"><i>311</i>&nbsp;            resp.setStatus(200);</b>
+<b class="nc"><i>312</i>&nbsp;            resp.setMessage(&quot;Record Deleted&quot;);</b>
+<b class="nc"><i>313</i>&nbsp;            resp.setData(r);</b>
+<b class="nc"><i>314</i>&nbsp;        }</b>
+<i>315</i>&nbsp;        else{
+<b class="nc"><i>316</i>&nbsp;            resp.setStatus(404);</b>
+<b class="nc"><i>317</i>&nbsp;            resp.setMessage(&quot;No Record Exist&quot;);</b>
+<i>318</i>&nbsp;        }
+<b class="nc"><i>319</i>&nbsp;        return resp;</b>
+<i>320</i>&nbsp;    }
+<i>321</i>&nbsp;
+<i>322</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-04-16 17:44</div>
+</div>
+</body>
+</html>

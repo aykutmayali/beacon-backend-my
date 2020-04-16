@@ -1,0 +1,163 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: SecurityConfig</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.minewtech.thingoo.config</a> ]
+</div>
+
+<h1>Coverage Summary for Class: SecurityConfig (com.minewtech.thingoo.config)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SecurityConfig</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 17)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">SecurityConfig$$EnhancerBySpringCGLIB$$d44c0789</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 17)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.minewtech.thingoo.config;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.minewtech.thingoo.identity.TokenUtil;
+<i>4</i>&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+<i>5</i>&nbsp;import org.springframework.context.annotation.Configuration;
+<i>6</i>&nbsp;import org.springframework.core.Ordered;
+<i>7</i>&nbsp;import org.springframework.http.HttpMethod;
+<i>8</i>&nbsp;import org.springframework.core.annotation.Order;
+<i>9</i>&nbsp;import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+<i>10</i>&nbsp;import org.springframework.security.config.annotation.web.builders.WebSecurity;
+<i>11</i>&nbsp;import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+<i>12</i>&nbsp;import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+<i>13</i>&nbsp;import org.springframework.security.web.access.channel.ChannelProcessingFilter;
+<i>14</i>&nbsp;import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;@Configuration
+<i>18</i>&nbsp;@EnableWebSecurity
+<i>19</i>&nbsp;@Order(1)
+<b class="nc"><i>20</i>&nbsp;public class SecurityConfig extends WebSecurityConfigurerAdapter {</b>
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;    @Autowired
+<i>23</i>&nbsp;    private TokenUtil tokenUtil;
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;    @Override
+<i>26</i>&nbsp;    public void configure(WebSecurity web) throws Exception {
+<i>27</i>&nbsp;        // Filters will not get executed for the resources
+<b class="nc"><i>28</i>&nbsp;        web.ignoring()</b>
+<i>29</i>&nbsp;//                .antMatchers(HttpMethod.POST, &quot;/statuses&quot;)
+<i>30</i>&nbsp;//                .antMatchers(&quot;/account/**&quot;)
+<b class="nc"><i>31</i>&nbsp;                .antMatchers(&quot;/&quot;, &quot;/resources/**&quot;, &quot;/static/**&quot;, &quot;/public/**&quot;, &quot;/configuration/**&quot;, &quot;/swagger-ui/**&quot;, &quot;/swagger-resources/**&quot;</b>
+<i>32</i>&nbsp;            , &quot;/*.html&quot;, &quot;/**/*.html&quot; ,&quot;/**/*.css&quot;,&quot;/**/*.js&quot;,&quot;/**/*.png&quot;,&quot;/**/*.jpg&quot;, &quot;/**/*.gif&quot;, &quot;/**/*.svg&quot;, &quot;/**/*.ico&quot;, &quot;/**/*.ttf&quot;,&quot;/**/*.woff&quot;);
+<i>33</i>&nbsp;
+<b class="nc"><i>34</i>&nbsp;    }</b>
+<i>35</i>&nbsp;
+<i>36</i>&nbsp;    //If Security is not working check application.properties if it is set to ignore
+<i>37</i>&nbsp;    @Override
+<i>38</i>&nbsp;    protected void configure(HttpSecurity http) throws Exception {
+<b class="nc"><i>39</i>&nbsp;        http</b>
+<b class="nc"><i>40</i>&nbsp;        .exceptionHandling().and()</b>
+<b class="nc"><i>41</i>&nbsp;        .anonymous().and()</b>
+<i>42</i>&nbsp;        // Disable Cross site references
+<b class="nc"><i>43</i>&nbsp;        .csrf().disable()</b>
+<i>44</i>&nbsp;        // Add CORS Filter
+<b class="nc"><i>45</i>&nbsp;        .addFilterBefore(new CorsFilter(), ChannelProcessingFilter.class)</b>
+<i>46</i>&nbsp;        // Custom Token based authentication based on the header previously given to the client
+<b class="nc"><i>47</i>&nbsp;        .addFilterBefore(new VerifyTokenFilter(tokenUtil), UsernamePasswordAuthenticationFilter.class)</b>
+<i>48</i>&nbsp;        // custom JSON based authentication by POST of {&quot;username&quot;:&quot;&lt;name&gt;&quot;,&quot;password&quot;:&quot;&lt;password&gt;&quot;} which sets the token header upon authentication
+<b class="nc"><i>49</i>&nbsp;        .addFilterBefore(new GenerateTokenForUserFilter (&quot;/token&quot;, authenticationManager(), tokenUtil), UsernamePasswordAuthenticationFilter.class)</b>
+<b class="nc"><i>50</i>&nbsp;        .authorizeRequests()</b>
+<b class="nc"><i>51</i>&nbsp;                .antMatchers(HttpMethod.POST, &quot;/gw/*/status&quot;).permitAll()</b>
+<b class="nc"><i>52</i>&nbsp;                .antMatchers(HttpMethod.POST,&quot;/account/*&quot;).permitAll()</b>
+<b class="nc"><i>53</i>&nbsp;                .antMatchers(HttpMethod.GET,&quot;/account/activate&quot;).permitAll()</b>
+<b class="nc"><i>54</i>&nbsp;        .anyRequest().authenticated()</b>
+<i>55</i>&nbsp;        ;
+<b class="nc"><i>56</i>&nbsp;    }</b>
+<i>57</i>&nbsp;
+<i>58</i>&nbsp;    /*
+<i>59</i>&nbsp;    * If You want to store encoded password in your databases and authenticate user
+<i>60</i>&nbsp;    * based on encoded password then uncomment the below method and provde an encoder
+<i>61</i>&nbsp;
+<i>62</i>&nbsp;    //@Autowired
+<i>63</i>&nbsp;    //private UserDetailsService userDetailsService;
+<i>64</i>&nbsp;
+<i>65</i>&nbsp;    @Override
+<i>66</i>&nbsp;    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+<i>67</i>&nbsp;        auth.userDetailsService(userDetailsService).passwordEncoder(new BCryptPasswordEncoder());
+<i>68</i>&nbsp;    }
+<i>69</i>&nbsp;    */
+<i>70</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-04-10 15:00</div>
+</div>
+</body>
+</html>

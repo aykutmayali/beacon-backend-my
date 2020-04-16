@@ -1,0 +1,184 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: GenerateTokenForUserFilter</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.minewtech.thingoo.config</a> ]
+</div>
+
+<h1>Coverage Summary for Class: GenerateTokenForUserFilter (com.minewtech.thingoo.config)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">GenerateTokenForUserFilter</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 32)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.minewtech.thingoo.config;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.fasterxml.jackson.databind.ObjectMapper;
+<i>4</i>&nbsp;import com.fasterxml.jackson.databind.ObjectWriter;
+<i>5</i>&nbsp;import com.minewtech.thingoo.identity.TokenUser;
+<i>6</i>&nbsp;import com.minewtech.thingoo.identity.TokenUtil;
+<i>7</i>&nbsp;import com.minewtech.thingoo.model.session.SessionItem;
+<i>8</i>&nbsp;import com.minewtech.thingoo.model.session.SessionResponse;
+<i>9</i>&nbsp;import lombok.extern.slf4j.Slf4j;
+<i>10</i>&nbsp;import org.apache.commons.io.IOUtils;
+<i>11</i>&nbsp;import org.json.JSONException;
+<i>12</i>&nbsp;import org.json.JSONObject;
+<i>13</i>&nbsp;import org.springframework.security.authentication.AccountStatusException;
+<i>14</i>&nbsp;import org.springframework.security.authentication.AuthenticationManager;
+<i>15</i>&nbsp;import org.springframework.security.authentication.AuthenticationServiceException;
+<i>16</i>&nbsp;import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+<i>17</i>&nbsp;import org.springframework.security.core.Authentication;
+<i>18</i>&nbsp;import org.springframework.security.core.AuthenticationException;
+<i>19</i>&nbsp;import org.springframework.security.core.context.SecurityContextHolder;
+<i>20</i>&nbsp;import org.springframework.security.web.WebAttributes;
+<i>21</i>&nbsp;import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
+<i>22</i>&nbsp;import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;import javax.servlet.FilterChain;
+<i>25</i>&nbsp;import javax.servlet.ServletException;
+<i>26</i>&nbsp;import javax.servlet.http.HttpServletRequest;
+<i>27</i>&nbsp;import javax.servlet.http.HttpServletResponse;
+<i>28</i>&nbsp;import java.io.IOException;
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;/* This filter maps to /session and tries to validate the username and password */
+<b class="nc"><i>32</i>&nbsp;@Slf4j</b>
+<i>33</i>&nbsp;public class GenerateTokenForUserFilter extends AbstractAuthenticationProcessingFilter {
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;    private TokenUtil tokenUtil;
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;    protected GenerateTokenForUserFilter(String urlMapping, AuthenticationManager authenticationManager, TokenUtil tokenUtil) {
+<b class="nc"><i>38</i>&nbsp;        super(new AntPathRequestMatcher(urlMapping));</b>
+<b class="nc"><i>39</i>&nbsp;        setAuthenticationManager(authenticationManager);</b>
+<b class="nc"><i>40</i>&nbsp;        this.tokenUtil = tokenUtil;</b>
+<i>41</i>&nbsp;    }
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;    @Override
+<i>44</i>&nbsp;    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
+<i>45</i>&nbsp;        try{
+<b class="nc"><i>46</i>&nbsp;            String jsonString = IOUtils.toString(request.getInputStream(), &quot;UTF-8&quot;);</b>
+<i>47</i>&nbsp;            /* using org.json */
+<b class="nc"><i>48</i>&nbsp;            JSONObject userJSON = new JSONObject(jsonString);</b>
+<b class="nc"><i>49</i>&nbsp;            String username = userJSON.getString(&quot;username&quot;);</b>
+<b class="nc"><i>50</i>&nbsp;            String password = userJSON.getString(&quot;password&quot;);</b>
+<b class="nc"><i>51</i>&nbsp;            log.info(&quot;username:{} and password:{} \n&quot;, username, password);</b>
+<i>52</i>&nbsp;            //final UsernamePasswordAuthenticationToken loginToken = new UsernamePasswordAuthenticationToken(&quot;demo&quot;, &quot;demo&quot;);
+<b class="nc"><i>53</i>&nbsp;            final UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username, password);</b>
+<b class="nc"><i>54</i>&nbsp;            return getAuthenticationManager().authenticate(authToken); // This will take to successfulAuthentication or faliureAuthentication function</b>
+<i>55</i>&nbsp;        }
+<b class="nc"><i>56</i>&nbsp;        catch( JSONException | AuthenticationException e){</b>
+<b class="nc"><i>57</i>&nbsp;            throw new AuthenticationServiceException(e.getMessage());</b>
+<i>58</i>&nbsp;        }
+<i>59</i>&nbsp;    }
+<i>60</i>&nbsp;    @Override
+<i>61</i>&nbsp;    protected void successfulAuthentication (HttpServletRequest req, HttpServletResponse res, FilterChain chain, Authentication authToken) throws IOException, ServletException {
+<b class="nc"><i>62</i>&nbsp;        SecurityContextHolder.getContext().setAuthentication(authToken);</b>
+<i>63</i>&nbsp;        /*
+<i>64</i>&nbsp;        JSONObject jsonResp = new JSONObject();
+<i>65</i>&nbsp;        TokenUser tokenUser = (TokenUser)authToken.getPrincipal();
+<i>66</i>&nbsp;        String newToken = this.tokenUtil.createTokenForUser(tokenUser);
+<i>67</i>&nbsp;
+<i>68</i>&nbsp;        jsonResp.put(&quot;token&quot;,newToken);
+<i>69</i>&nbsp;        jsonResp.put(&quot;firstName&quot;,tokenUser.getUser().getFirstName());
+<i>70</i>&nbsp;        jsonResp.put(&quot;lastName&quot;,tokenUser.getUser().getLastName());
+<i>71</i>&nbsp;        jsonResp.put(&quot;email&quot;,tokenUser.getUser().getEmail());
+<i>72</i>&nbsp;        jsonResp.put(&quot;role&quot;,tokenUser.getRole());
+<i>73</i>&nbsp;        */
+<i>74</i>&nbsp;
+<b class="nc"><i>75</i>&nbsp;        TokenUser tokenUser = (TokenUser)authToken.getPrincipal();</b>
+<b class="nc"><i>76</i>&nbsp;        SessionResponse resp = new SessionResponse();</b>
+<b class="nc"><i>77</i>&nbsp;        SessionItem respItem = new SessionItem();</b>
+<b class="nc"><i>78</i>&nbsp;        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();</b>
+<b class="nc"><i>79</i>&nbsp;        String tokenString = this.tokenUtil.createTokenForUser(tokenUser);</b>
+<i>80</i>&nbsp;
+<b class="nc"><i>81</i>&nbsp;        respItem.setName(tokenUser.getUser().getName());</b>
+<b class="nc"><i>82</i>&nbsp;        respItem.setUserId(tokenUser.getUser().getUuid());</b>
+<b class="nc"><i>83</i>&nbsp;        respItem.setEmail(tokenUser.getUser().getEmail());</b>
+<b class="nc"><i>84</i>&nbsp;        respItem.setRole(tokenUser.getUser().getRole().toString());</b>
+<b class="nc"><i>85</i>&nbsp;        respItem.setToken(tokenString);</b>
+<i>86</i>&nbsp;
+<b class="nc"><i>87</i>&nbsp;        resp.setStatus(200);</b>
+<b class="nc"><i>88</i>&nbsp;        resp.setMessage(&quot;Login Success&quot;);</b>
+<b class="nc"><i>89</i>&nbsp;        resp.setData(respItem);</b>
+<b class="nc"><i>90</i>&nbsp;        String jsonRespString = ow.writeValueAsString(resp);</b>
+<i>91</i>&nbsp;
+<b class="nc"><i>92</i>&nbsp;        res.setStatus(HttpServletResponse.SC_OK);</b>
+<b class="nc"><i>93</i>&nbsp;        res.getWriter().write(jsonRespString);</b>
+<i>94</i>&nbsp;        //res.getWriter().write(jsonResp.toString());
+<b class="nc"><i>95</i>&nbsp;        res.getWriter().flush();</b>
+<b class="nc"><i>96</i>&nbsp;        res.getWriter().close();</b>
+<i>97</i>&nbsp;
+<i>98</i>&nbsp;        // DONT call supper as it contine the filter chain super.successfulAuthentication(req, res, chain, authResult);
+<i>99</i>&nbsp;    }
+<i>100</i>&nbsp;
+<i>101</i>&nbsp;    }
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-04-10 15:00</div>
+</div>
+</body>
+</html>

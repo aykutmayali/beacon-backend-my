@@ -1,0 +1,117 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: UserDetailsService</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.minewtech.thingoo.identity</a> ]
+</div>
+
+<h1>Coverage Summary for Class: UserDetailsService (com.minewtech.thingoo.identity)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UserDetailsService</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 8)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.minewtech.thingoo.identity;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.minewtech.thingoo.model.user.User;
+<i>4</i>&nbsp;import com.minewtech.thingoo.repository.UserRepository;
+<i>5</i>&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+<i>6</i>&nbsp;import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
+<i>7</i>&nbsp;import org.springframework.security.authentication.DisabledException;
+<i>8</i>&nbsp;import org.springframework.security.core.userdetails.UsernameNotFoundException;
+<i>9</i>&nbsp;import org.springframework.stereotype.Service;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;@Service
+<b class="nc"><i>12</i>&nbsp;public class UserDetailsService implements org.springframework.security.core.userdetails.UserDetailsService {</b>
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;    @Autowired
+<i>15</i>&nbsp;    private UserRepository userRepository;
+<b class="nc"><i>16</i>&nbsp;    private final AccountStatusUserDetailsChecker detailsChecker = new AccountStatusUserDetailsChecker();</b>
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;    @Override
+<i>19</i>&nbsp;    public final TokenUser loadUserByUsername(String username) throws UsernameNotFoundException, DisabledException {
+<i>20</i>&nbsp;
+<b class="nc"><i>21</i>&nbsp;        final User user = userRepository.findOneByEmail(username).orElseThrow(() -&gt; new UsernameNotFoundException(&quot;User not found&quot;));</b>
+<i>22</i>&nbsp;        TokenUser currentUser;
+<b class="nc"><i>23</i>&nbsp;        if (user.isActive() == true){</b>
+<b class="nc"><i>24</i>&nbsp;            currentUser = new TokenUser(user);</b>
+<i>25</i>&nbsp;        }
+<i>26</i>&nbsp;        else{
+<b class="nc"><i>27</i>&nbsp;            throw new DisabledException(&quot;User is not activated (Disabled User)&quot;);</b>
+<i>28</i>&nbsp;            //If pending activation return a disabled user
+<i>29</i>&nbsp;            //currentUser = new TokenUser(user, false);
+<i>30</i>&nbsp;        }
+<b class="nc"><i>31</i>&nbsp;        detailsChecker.check(currentUser);</b>
+<b class="nc"><i>32</i>&nbsp;        return currentUser;</b>
+<i>33</i>&nbsp;    }
+<i>34</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-04-10 12:55</div>
+</div>
+</body>
+</html>

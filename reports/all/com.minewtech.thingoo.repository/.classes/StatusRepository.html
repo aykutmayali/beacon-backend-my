@@ -1,0 +1,72 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: StatusRepository</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.minewtech.thingoo.repository</a> ]
+</div>
+
+<h1>Coverage Summary for Class: StatusRepository (com.minewtech.thingoo.repository)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">StatusRepository</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.minewtech.thingoo.repository;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.minewtech.thingoo.model.device.DeviceType;
+<i>4</i>&nbsp;import com.minewtech.thingoo.model.operation.Operation;
+<i>5</i>&nbsp;import com.minewtech.thingoo.model.status.Status;
+<i>6</i>&nbsp;import org.springframework.data.domain.Page;
+<i>7</i>&nbsp;import org.springframework.data.domain.Pageable;
+<i>8</i>&nbsp;import org.springframework.data.jpa.domain.Specification;
+<i>9</i>&nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+<i>10</i>&nbsp;import org.springframework.data.repository.PagingAndSortingRepository;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;import java.util.Collection;
+<i>13</i>&nbsp;import java.util.List;
+<i>14</i>&nbsp;import java.util.Optional;
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;public interface StatusRepository extends JpaRepository&lt;Status, String&gt; {
+<i>18</i>&nbsp;    Optional&lt;Status&gt; findOneByUuid(String uuid);
+<i>19</i>&nbsp;//    Page&lt;Status&gt; findByUserId(String userId, Pageable pageable);
+<i>20</i>&nbsp;    Page&lt;Status&gt; findAll(Pageable pageable);
+<i>21</i>&nbsp;    Page&lt;Status&gt; findAll(Specification&lt;Status&gt; spec, Pageable pageable);
+<i>22</i>&nbsp;    List&lt;Status&gt; findAllByGatewayMacAndMacIn(String gatewayMac,String macs);
+<i>23</i>&nbsp;    List&lt;Status&gt; findAllByGatewayMacAndMacIn(String gatewayMac, Collection&lt;String&gt; macs);
+<i>24</i>&nbsp;    List&lt;Status&gt; findAllByGatewayMacAndMacInAndTypeIn(String gatewayMac, Collection&lt;String&gt; macs, Collection&lt;DeviceType&gt; types);
+<i>25</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-04-16 17:43</div>
+</div>
+</body>
+</html>
